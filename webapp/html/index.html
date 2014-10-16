@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" ng-app="orchidae">
+<head>
+    <meta charset="utf-8">
+    <title>Service App</title>
+    <link rel="stylesheet" type="text/css" href="resource/css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="resource/css/orchidae.css"/>
+
+    <script src="resource/js/jquery.min.js"></script>
+    <script src="resource/js/angular.min.js"></script>
+    <script src="resource/js/headroom.min.js"></script>
+    <script src="resource/js/angular.headroom.min.js"></script>
+    <script src="resource/js/angular-route.min.js"></script>
+    <script src="resource/js/app.js"></script>
+    <script src="resource/js/controller/settings.js"></script>
+</head>
+<body>
+<div class="container" id="nav-top">
+    <header headroom>
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">orchidae</a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#/upload">Upload</a></li>
+                    <li><a href="#/stream">Photostream</a></li>
+                    <li><a href="#/albums">Albums</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#/login">Login</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+</div>
+<div ng-view class="site"></div>
+</body>
+</html>

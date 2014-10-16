@@ -1,0 +1,10 @@
+<div class="login">
+    <form action="#/register" method="post">
+        <div><label> User Name : <input type="text" name="username"/> </label></div>
+        <div><label>Email: <input type="text" name="email"/></label></div>
+        <div><label> Password: <input type="password" name="password"/> </label></div>
+        <div><label>Repeat Password: <input type="password" name="password2"/> </label></div>
+        <div><input type="submit" value="Register"/></div>
+        <input type="hidden" name="$_csrf.parameterName" value="${_csrf.token}"/>
+    </form>
+</div>
