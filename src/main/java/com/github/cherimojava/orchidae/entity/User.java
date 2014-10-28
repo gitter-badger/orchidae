@@ -15,13 +15,11 @@
  */
 package com.github.cherimojava.orchidae.entity;
 
-import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 
 import com.github.cherimojava.data.mongo.entity.Entity;
 import com.github.cherimojava.data.mongo.entity.annotation.Id;
 
-@Named("users")
 public interface User extends Entity<User> {
 
 	@Id

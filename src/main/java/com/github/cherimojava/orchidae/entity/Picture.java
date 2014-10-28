@@ -26,7 +26,6 @@ import com.github.cherimojava.data.mongo.entity.annotation.Id;
 /**
  * Picture object contains everything an Object needs to have
  */
-@Named("pictures")
 public interface Picture extends Entity<Picture> {
 
 	/**
