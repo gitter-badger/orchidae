@@ -18,6 +18,7 @@ package com.github.cherimojava.orchidae.entity;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 
+import com.github.cherimojava.data.mongo.entity.annotation.Final;
 import org.joda.time.DateTime;
 
 import com.github.cherimojava.data.mongo.entity.Entity;
@@ -36,6 +37,7 @@ public interface Picture extends Entity<Picture> {
 
 	public Picture setId(String id);
 
+	@Final
 	@NotNull
 	public String getUser();
 
@@ -45,6 +47,7 @@ public interface Picture extends Entity<Picture> {
 
 	public Picture setTitle(String title);
 
+	@Final
 	public String getOriginalName();
 
 	public Picture setOriginalName(String name);

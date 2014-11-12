@@ -18,6 +18,7 @@ package com.github.cherimojava.orchidae;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
+import com.github.cherimojava.orchidae.config.Markers;
 import com.github.cherimojava.orchidae.config.RootConfig;
 
 /**
@@ -27,6 +28,9 @@ import com.github.cherimojava.orchidae.config.RootConfig;
  */
 @EnableAutoConfiguration
 public class Starter {
+
+	public static Markers markers;
+
 	/**
 	 * application entry point
 	 * 

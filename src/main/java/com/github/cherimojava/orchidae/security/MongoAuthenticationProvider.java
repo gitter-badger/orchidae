@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.cherimojava.orchidae;
+package com.github.cherimojava.orchidae.security;
+
+import static com.github.cherimojava.orchidae.config.Markers.AUTH;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,28 +25,39 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.github.cherimojava.data.mongo.entity.EntityFactory;
-import com.github.cherimojava.orchidae.entity.User;
-
+/**
+ * Authenticates users against MongoDB data store
+ */
 public class MongoAuthenticationProvider implements AuthenticationProvider {
-
-	@Autowired
-	private EntityFactory factory;
 
 	private static final String ERROR_MSG = "Incorrect password and/or username";
 
 	private static Logger LOG = LogManager.getLogger();
 
+	@Autowired
+	private PasswordEncoder pwEncoder;
+
+	@Autowired
+	UserDetailsService userDetailsService;
+
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		LOG.info("login attempt for user {}", authentication.getName());
-		User user = factory.load(User.class, authentication.getName());
-		// if (user!=null) {
-		// user
-		// }
-		LOG.info("failed to authenticate user {}", authentication.getName());
-		throw new BadCredentialsException(ERROR_MSG);
+		LOG.info(AUTH, "login attempt for user {}", authentication.getName());
+		UserDetails details = userDetailsService.loadUserByUsername((String) authentication.getPrincipal());
+
+		if (details == null || !pwEncoder.matches((String) authentication.getCredentials(), details.getPassword())) {
+			LOG.info(AUTH, "failed to authenticate user {}", authentication.getName());
+			throw new BadCredentialsException(ERROR_MSG);
+		}
+
+		LOG.info(AUTH, "login attempt for user {}", authentication.getName());
+
+		return new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(),
+				details.getAuthorities());
 	}
 
 	@Override

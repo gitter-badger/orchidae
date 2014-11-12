@@ -17,17 +17,19 @@ package com.github.cherimojava.orchidae.entity;
 
 import javax.validation.constraints.NotNull;
 
+import org.joda.time.DateTime;
+
 import com.github.cherimojava.data.mongo.entity.Entity;
+import com.github.cherimojava.data.mongo.entity.annotation.Final;
 import com.github.cherimojava.data.mongo.entity.annotation.Id;
 
+/**
+ * Entity for users on the system
+ */
 public interface User extends Entity<User> {
 
-	@Id
-	public String getId();
-
-	public User setId(String id);
-
 	@NotNull
+	@Id
 	public String getUsername();
 
 	public User setUsername(String username);
@@ -44,4 +46,10 @@ public interface User extends Entity<User> {
 	public String getPassword();
 
 	public User setPassword(String password);
+
+	@Final
+	@NotNull
+	public DateTime getMemberSince();
+
+	public User setMemberSince(DateTime registered);
 }

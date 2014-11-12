@@ -16,6 +16,8 @@
 package com.github.cherimojava.orchidae.config;
 
 import java.io.File;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Properties;
 
@@ -24,6 +26,7 @@ import javax.servlet.MultipartConfigElement;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,6 +50,14 @@ import com.github.cherimojava.data.spring.EntityConverter;
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
 	private static final File webapp = new File(SystemUtils.getUserDir(), "webapp");
+
+	@Value("${salt:}")
+	private String salt;
+
+	@Bean
+	public String salt() {
+		return salt;
+	}
 
 	/**
 	 * velocityconfiguration setting the path for the resources to ./webapp folder instead of convention value
@@ -117,5 +128,10 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	@Autowired
 	public EntityConverter entityConverter(EntityFactory factory) {
 		return new EntityConverter(factory);
+	}
+
+	@Bean
+	public MessageDigest messageDigest() throws NoSuchAlgorithmException {
+		return MessageDigest.getInstance("SHA-256");
 	}
 }

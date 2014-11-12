@@ -107,13 +107,14 @@ public class PictureController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/{user}/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
-	public ResponseEntity<Resource> getPicture(@PathVariable("user") String user,@PathVariable("id") String id) throws IOException {
+	public ResponseEntity<Resource> getPicture(@PathVariable("user") String user, @PathVariable("id") String id)
+			throws IOException {
 		File picture = new File(storagePath, id);
 		if (picture.exists()) {
 			return new ResponseEntity<Resource>(new InputStreamResource(FileUtils.openInputStream(picture)),
 					HttpStatus.OK);
 		} else {
-            LOG.debug("Could not find picture with id {}",id);
+			LOG.debug("Could not find picture with id {}", id);
 			// picture doesn't exist so return 404
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
