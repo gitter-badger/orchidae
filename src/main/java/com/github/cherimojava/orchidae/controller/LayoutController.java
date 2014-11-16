@@ -64,7 +64,11 @@ public class LayoutController {
 	// switch to ajax requests http://blog.trifork.com/2014/03/20/web-forms-with-java-angularjs-and-other-approaches/
 	private static final List<String> formPages = ImmutableList.of("register", "login");
 
-	@RequestMapping(value = "/layout/{page}", method = GET)
+	/**
+	 * Serves page layouts. Anything which ends with html is supposed to be a layout and will be handled through this
+	 * method
+	 */
+	@RequestMapping(value = "/**/{page}.html", method = GET)
 	public String layout(@PathVariable("page") String page, HttpServletRequest request, ModelMap map) {
 		if (formPages.contains(page)) {
 			// For form pages we have to add the csrf token
@@ -73,12 +77,14 @@ public class LayoutController {
 		return "layout/" + page;
 	}
 
-	@RequestMapping(value = "/layout/{page}", method = POST)
-	public ResponseEntity<String> processForm(HttpServletRequest request, @PathVariable("page") String page) {
-		if (!formPages.contains(page)) {
+	@RequestMapping(value = "/**/{form}.form", method = POST)
+	public Object processForm(HttpServletRequest request, @PathVariable("form") String form) {
+		switch (form.toLowerCase()) {
+		case "register":
+			return registerUser(request);
+		default:
 			return new ResponseEntity<>("Not Found", HttpStatus.BAD_REQUEST);
 		}
-		return null;
 	}
 
 	@RequestMapping("/")
@@ -86,8 +92,7 @@ public class LayoutController {
 		return "index";
 	}
 
-	@RequestMapping(value = "/register", method = POST)
-	public String registerUser(HttpServletRequest request) {
+	private String registerUser(HttpServletRequest request) {
 		// this needs a hell of improvement
 		if (StringUtils.isEmpty(request.getParameter("username"))) {
 			return "redirect:/";

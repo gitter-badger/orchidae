@@ -33,8 +33,8 @@ import com.github.cherimojava.orchidae.security.MongoUserDetailService;
 public class cfgSecurity extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().anyRequest().permitAll().and().formLogin().loginPage("/layout/login").permitAll().loginProcessingUrl(
-				"/logmein");
+		http.authorizeRequests().anyRequest().permitAll().and().formLogin().loginPage("/login.html").permitAll().loginProcessingUrl(
+				"/login.form");
 	}
 
 	@Override
