@@ -1,7 +1,7 @@
 #!/bin/sh
 bower install
-TARGET_JS='../webapp/resources/js'
-TARGET_CSS='../webapp/resources/css'
+TARGET_JS='../webapp/resources/js/dist'
+TARGET_CSS='../webapp/resources/css/dist'
 cd bower_components
 cp headroom.js/dist/angular.headroom.min.js $TARGET_JS
 cp headroom.js/dist/headroom.min.js $TARGET_JS
