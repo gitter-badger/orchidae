@@ -2,7 +2,7 @@
 (function () {
 var orchidae = angular.module('orchidae');
 
-    orchidae.controller('MainController', function ($scope, $rootScope, $http, i18n,$location) {
+    orchidae.controller('MainController', function ($scope, $rootScope, $http, i18n, $location) {
         $scope.language = function () {
             return i18n.language;
         };
