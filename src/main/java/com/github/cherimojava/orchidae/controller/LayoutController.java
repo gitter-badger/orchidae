@@ -18,7 +18,6 @@ package com.github.cherimojava.orchidae.controller;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.List;
 
@@ -109,9 +108,5 @@ public class LayoutController {
 			newUser.save();
 		}
 		return "redirect:/";
-	}
-
-	private String toHex(byte[] bytes) {
-		return String.format("%x", new BigInteger(bytes));
 	}
 }
