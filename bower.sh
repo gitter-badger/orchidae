@@ -1,4 +1,5 @@
 #!/bin/sh
+rm -rf bower_components
 bower install
 TARGET_JS='../webapp/resources/js/dist'
 TARGET_CSS='../webapp/resources/css/dist'
