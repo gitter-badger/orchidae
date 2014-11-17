@@ -1,14 +1,11 @@
 'use strict';
 
-var orchidae = {};
-
-var App = angular.module('orchidae', ['ngRoute','headroom']);
+var orchidae = angular.module('orchidae', ['ngRoute','headroom']);
 
 // Declare app level module which depends on filters, and services
-App.config(['$routeProvider', function ($routeProvider) {
+orchidae.config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/upload', {
         templateUrl: '/upload.html',
-        controller: SettingsController
     });
     $routeProvider.when('/', {
         templateUrl: '/welcome.html'

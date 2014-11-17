@@ -5,13 +5,16 @@
     <title>Service App</title>
     <link rel="stylesheet" type="text/css" href="resource/css/dist/bootstrap.css"/>
     <link rel="stylesheet" type="text/css" href="resource/css/orchidae.css"/>
+    <link rel="stylesheet" type="text/css" href="resource/css/dist/flag-icon.min.css"/>
 
     <script src="resource/js/dist/jquery.min.js"></script>
     <script src="resource/js/dist/angular.min.js"></script>
     <script src="resource/js/dist/headroom.min.js"></script>
     <script src="resource/js/dist/angular.headroom.min.js"></script>
     <script src="resource/js/dist/angular-route.min.js"></script>
+    <script src="resource/js/dist/jquery.i18n.properties.js"></script>
     <script src="resource/js/app.js"></script>
+    <script src="resource/js/controller/i18n.js"></script>
     <script src="resource/js/controller/settings.js"></script>
 </head>
 <body>
@@ -23,13 +26,35 @@
             </div>
             <div>
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#/upload">Upload</a></li>
-                    <li><a href="#/stream">Photostream</a></li>
-                    <li><a href="#/albums">Albums</a></li>
+                    <li class="active"><a href="#/upload">
+                        <msg key="main.upload"/>
+                    </a></li>
+                    <li><a href="#/stream">
+                        <msg key="main.photostream"/>
+                    </a></li>
+                    <li><a href="#/albums">
+                        <msg key="main.album"/>
+                    </a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#/login">Login</a></li>
+                    <li><a href><span class="flag-icon flag-icon-us"></span></a></li>
+                    <li><a href="#/login">
+                        <msg key="main.login"/>
+                    </a></li>
                 </ul>
+                <!--<div class="container" ng-controller="NavBarCtrl">-->
+                <!--<button class="btn btn-navbar flag-icon-background flag-icon-de"-->
+                <!--ng-click="isCollapsed = !isCollapsed">-->
+                <!--</button>-->
+                <!--<div class="nav-collapse" collapse="isCollapsed">-->
+                <!--<ul class="nav">-->
+                <!--<li><span class="flag-icon flag-icon-de"></span>-->
+                <!--</li>-->
+                <!--<li><span class="flag-icon flag-icon-us"></span>-->
+                <!--</li>-->
+                <!--</ul>-->
+                <!--</div>-->
+                <!--</div>-->
             </div>
         </nav>
     </header>
