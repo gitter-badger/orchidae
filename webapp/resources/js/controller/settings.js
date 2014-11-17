@@ -2,7 +2,7 @@
 (function () {
 var orchidae = angular.module('orchidae');
 
- orchidae.controller('MainController', function ($scope, $rootScope, $http, i18n, $location) {
+    orchidae.controller('MainController', function ($scope, $rootScope, $http, i18n,$location) {
         $scope.language = function () {
             return i18n.language;
         };
@@ -12,5 +12,11 @@ var orchidae = angular.module('orchidae');
             langElement.addClass("flag-icon-" + lang);
             i18n.setLanguage(lang);
         };
+
+        $scope.availLang = function () {
+            return ['us','de']
+        };
     });
+
 }());
+

@@ -46,11 +46,9 @@
                            data-toggle="dropdown">
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href ng-click="setLanguage('us')"><span class="flag-icon flag-icon-us"></span>
-                                <msg key="lang.english"/>
-                            </a></li>
-                            <li><a href ng-click="setLanguage('de')"><span class="flag-icon flag-icon-de"></span>
-                                <msg key="lang.german"/>
+                            <li ng-repeat="lang in availLang()"><a href ng-click="setLanguage(lang)"><span
+                                    class="flag-icon flag-icon-{{lang}}"></span>
+                                <msg key="lang.{{lang}}"/>
                             </a></li>
                         </ul>
                     </li>
