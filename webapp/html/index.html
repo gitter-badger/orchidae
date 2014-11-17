@@ -18,7 +18,7 @@
     <script src="resource/js/controller/i18n.js"></script>
     <script src="resource/js/controller/settings.js"></script>
 </head>
-<body>
+<body ng-controller="MainController" ng-init="setLanguage('us')">
 <div class="container" id="nav-top">
     <header headroom>
         <nav class="navbar navbar-default" role="navigation">
@@ -38,10 +38,22 @@
                     </a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href><span class="flag-icon flag-icon-us"></span></a></li>
                     <li><a href="#/login">
                         <msg key="main.login"/>
                     </a></li>
+                    <li class="dropdown">
+                        <a href="" class="dropdown-toggle flag-icon" id="langToggle"
+                           data-toggle="dropdown">
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href ng-click="setLanguage('us')"><span class="flag-icon flag-icon-us"></span>
+                                <msg key="lang.english"/>
+                            </a></li>
+                            <li><a href ng-click="setLanguage('de')"><span class="flag-icon flag-icon-de"></span>
+                                <msg key="lang.german"/>
+                            </a></li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
         </nav>

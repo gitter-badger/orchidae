@@ -1,20 +1,16 @@
 'use strict';
+(function () {
+var orchidae = angular.module('orchidae');
 
-var SettingsController = function($scope, $http) {
-//    $scope.fetchAllSettings = function() {
-//        $http.post('entity/setting/query',{},{}).success(function(settings){
-//            $scope.settings = settings.list;
-//        });
-//    }
-//
-//    $scope.fetchAllSettings();
-//
-//    //configuration of grid
-//    $scope.settingOptions = settingsTableConfig;
-//
-//    //after editing save changes
-//    $scope.$on('ngGridEventEndCellEdit', function(evt){
-//        var entity = evt.targetScope.row.entity;
-//        $http.post('entity/setting',entity,{})
-//    });
-}
+ orchidae.controller('MainController', function ($scope, $rootScope, $http, i18n, $location) {
+        $scope.language = function () {
+            return i18n.language;
+        };
+        $scope.setLanguage = function (lang) {
+            var langElement =angular.element(document.querySelector('#langToggle'));
+            langElement.removeClass("flag-icon-" + i18n.language);
+            langElement.addClass("flag-icon-" + lang);
+            i18n.setLanguage(lang);
+        };
+    });
+}());

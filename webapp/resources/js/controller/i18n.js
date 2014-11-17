@@ -15,7 +15,7 @@
             });
         };
         this.setLanguage('en');
-    }());
+    });
 
     orchidae.directive('msg', function () {
         return {
