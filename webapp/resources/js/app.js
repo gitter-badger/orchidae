@@ -1,6 +1,6 @@
 'use strict';
 
-var orchidae = angular.module('orchidae', ['ngRoute','headroom']);
+var orchidae = angular.module('orchidae', ['ngRoute','headroom','ui.bootstrap']);
 
 // Declare app level module which depends on filters, and services
 orchidae.config(['$routeProvider', function ($routeProvider) {

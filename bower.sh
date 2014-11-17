@@ -31,3 +31,6 @@ cp bootstrap/dist/css/bootstrap.css.map $TARGET_CSS
 #flags
 cp -r flag-icon-css/flags $TARGET_CSS/..
 cp flag-icon-css/css/flag-icon.min.css $TARGET_CSS
+
+#angular bootstrapui
+cp angular-bootstrap/ui-bootstrap.min.js $TARGET_JS
