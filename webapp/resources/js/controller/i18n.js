@@ -1,3 +1,4 @@
+//source code adapted from https://github.com/nidi3/AngularJS-SpringMVC-example
 (function () {
     var orchidae = angular.module('orchidae');
 
