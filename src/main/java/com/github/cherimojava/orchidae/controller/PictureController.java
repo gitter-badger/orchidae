@@ -25,8 +25,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.Document;
 import org.joda.time.DateTime;
-import org.mongodb.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -43,7 +43,6 @@ import com.github.cherimojava.orchidae.entity.Picture;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mongodb.client.MongoIterable;
-import com.mongodb.client.model.FindOptions;
 
 /**
  * Does the handling of uploading and serving pictures
@@ -86,8 +85,8 @@ public class PictureController {
 		}
 
 		// TODO only return pictures visible to the current user
-		MongoIterable<Picture> it = (MongoIterable<Picture>) factory.getCollection(Picture.class).find(
-				new FindOptions().limit(number).sort(new Document("uploaded", 1)));
+		MongoIterable<Picture> it = factory.getCollection(Picture.class).find(Picture.class).limit(number).sort(
+				new Document("uploaded", 1));
 		return Lists.newArrayList(it);
 	}
 

@@ -23,6 +23,7 @@ import java.net.UnknownHostException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.inject.Named;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,9 +59,11 @@ public class cfgMongo {
 	// TODO make this config available/should be possible to include it but not loading it
 
 	@Autowired
+	@Named("dbName")
 	private String mongoDBName;
 
 	@Autowired
+	@Named("dbPath")
 	private String dbpath;
 
 	@Value("${log.path:./log}")

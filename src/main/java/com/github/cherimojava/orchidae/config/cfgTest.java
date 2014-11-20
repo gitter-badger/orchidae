@@ -28,12 +28,12 @@ public class cfgTest {
 
 	private String mongoDBName = "testing";
 
-	@Bean
+	@Bean(name = "dbPath")
 	public String dbpath() {
 		return dbpath;
 	}
 
-	@Bean
+	@Bean(name = "dbName")
 	public String mongoDBName() {
 		return mongoDBName;
 	}

@@ -23,10 +23,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
+import org.bson.Document;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mongodb.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.ResourceHttpMessageConverter;
@@ -129,7 +129,8 @@ public class _PictureController extends ControllerTestBase {
 		createPicture("one", "png");
 		Thread.sleep(10);
 		createPicture("two", "jpg");
-        getLatest(10).andExpect(jsonPath("$[0].originalName",is("one.png"))).andExpect(jsonPath("$[1].originalName",is("two.jpg")));
+		getLatest(10).andExpect(jsonPath("$[0].originalName", is("one.png"))).andExpect(
+				jsonPath("$[1].originalName", is("two.jpg")));
 	}
 
 	private ResultActions createPicture(String name, String type) throws Exception {
@@ -138,11 +139,11 @@ public class _PictureController extends ControllerTestBase {
 		return mvc.perform(fileUpload("/picture").file(file).accept(MediaType.TEXT_HTML)).andExpect(
 				status().isCreated()).andExpect(content().contentType(MediaType.TEXT_HTML));
 	}
-    
-    private ResultActions getLatest(int count) throws Exception {
-       return mvc.perform(get(url("latest", "10")).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andExpect(
-                content().contentType(MediaType.APPLICATION_JSON));
-    }
+
+	private ResultActions getLatest(int count) throws Exception {
+		return mvc.perform(get(url("latest", "10")).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andExpect(
+				content().contentType(MediaType.APPLICATION_JSON));
+	}
 
 	public String url(String... parts) {
 		return "/picture/" + user + "/" + super.url(parts);

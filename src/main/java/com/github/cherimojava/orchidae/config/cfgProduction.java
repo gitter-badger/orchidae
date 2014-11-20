@@ -31,12 +31,12 @@ public class cfgProduction {
 
 	private String mongoDBName = "orchidae";
 
-	@Bean
+	@Bean(name = "dbPath")
 	public String dbpath() {
 		return dbpath;
 	}
 
-	@Bean
+	@Bean(name = "dbName")
 	public String mongoDBName() {
 		return mongoDBName;
 	}
