@@ -53,9 +53,6 @@ public class LayoutController {
 	MessageDigest md;
 
 	@Autowired
-	String salt;
-
-	@Autowired
 	PasswordEncoder pwEncoder;
 
 	@Autowired

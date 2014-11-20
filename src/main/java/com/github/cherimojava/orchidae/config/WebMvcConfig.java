@@ -26,7 +26,6 @@ import javax.servlet.MultipartConfigElement;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,13 +52,8 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
 	private static final File webapp = new File(SystemUtils.getUserDir(), "webapp");
 
-	@Value("${salt:}")
-	private String salt;
-
-	@Bean
-	public String salt() {
-		return salt;
-	}
+	@Autowired
+	EntityFactory factory;
 
 	/**
 	 * velocityconfiguration setting the path for the resources to ./webapp folder instead of convention value
@@ -115,19 +109,14 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 		return factory.createMultipartConfig();
 	}
 
-	@Autowired
-	EntityConverter converter;
-
 	@Override
 	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-		super.configureMessageConverters(converters);
 		// addDefaultHttpMessageConverters(converters);
-		converters.add(converter);
+		converters.add(entityConverter(factory));
 		converters.add(new ByteArrayHttpMessageConverter());
+		super.configureMessageConverters(converters);
 	}
 
-	@Bean
-	@Autowired
 	public EntityConverter entityConverter(EntityFactory factory) {
 		return new EntityConverter(factory);
 	}
