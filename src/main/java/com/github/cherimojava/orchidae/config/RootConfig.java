@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Import;
  * @author philnate
  */
 @Configuration
-@Import({ Controllers.class, WebMvcConfig.class, cfgMongo.class,cfgSecurity.class })
+@Import({ Controllers.class, WebMvcConfig.class, cfgMongo.class, cfgSecurity.class })
 public class RootConfig {
 	// config needed for production
 	public static final String PROFILE_PRODUCTION = "production";
