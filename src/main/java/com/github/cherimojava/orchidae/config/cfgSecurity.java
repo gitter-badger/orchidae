@@ -31,10 +31,11 @@ import com.github.cherimojava.orchidae.security.MongoUserDetailService;
 @Configuration
 @EnableWebMvcSecurity
 public class cfgSecurity extends WebSecurityConfigurerAdapter {
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().anyRequest().permitAll().and().formLogin().loginPage("/login.html").permitAll().loginProcessingUrl(
-				"/login.form");
+		http.authorizeRequests().antMatchers("/picture").authenticated().anyRequest().permitAll().and().formLogin().loginPage(
+				"/#/login").permitAll().loginProcessingUrl("/login.form");
 	}
 
 	@Override

@@ -22,3 +22,8 @@ div.ng-scope {
 nav.navbar {
     padding-right:20px;
 }
+
+.dropzone {
+    height:100%;
+    width:100%;
+}

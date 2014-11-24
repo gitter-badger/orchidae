@@ -129,7 +129,7 @@ public class PictureController {
 	 *         information which pictures couldn't be uploaded
 	 * @since 1.0.0
 	 */
-	@RequestMapping(method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<String> handleFileUpload(MultipartHttpServletRequest request) {
 		List<String> badFiles = Lists.newArrayList();
 		for (Iterator<String> it = request.getFileNames(); it.hasNext();) {

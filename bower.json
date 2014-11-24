@@ -9,7 +9,8 @@
     "jquery": "~2.1.1",
     "bootstrap": "3.3.0",
     "jquery-i18n-properties": "1.1.0",
-    "flag-icon-css": "0.6.4"
+    "flag-icon-css": "0.6.4",
+    "dropzone": "3.11.0"
   },
   "private": true
 }

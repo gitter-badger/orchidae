@@ -99,7 +99,20 @@ module.exports = function (grunt) {
 						cwd: bowerDir + 'headroom.js/dist',
 						src: ['angular.headroom.min.js', 'headroom.min.js'],
 						dest: jsDir
-					}]
+					},
+					{//dropzone js
+						expand: true,
+						cwd: bowerDir + 'dropzone/downloads/',
+						src: ['dropzone.min.js'],
+						dest: jsDir
+					},
+					{//dropzone css
+						expand: true,
+						cwd: bowerDir + 'dropzone/downloads/css',
+						src: ['dropzone.css', 'basic.css'],
+						dest: cssDir
+					}
+					]
 			}
 		},
     });

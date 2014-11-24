@@ -1,9 +1,14 @@
-<div ng-controller="SettingsController">
-    <form method="POST" enctype="multipart/form-data"
-          action="/picture">
-        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-        File to upload: <input type="file" name="file"><br/> Name: <input
-            type="text" name="name"><br/> <br/> <input type="submit"
-                                                       value="Upload"> Press here to upload the file!
-    </form>
-</div>
+<script>
+  new Dropzone(document.getElementById('picture-dropzone'), { // Make the whole body a dropzone
+    url: "/picture", // Set the url
+    previewsContainer: "#previews", // Define the container to display the previews
+    acceptedMimeTypes: "image/*"
+  });
+
+
+
+</script>
+<form id="picture-dropzone" enctype="multipart/form-data" action="/picture" class="dropzone">
+    <div id="previews" class="dropzone-previews"></div>
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+</form>
