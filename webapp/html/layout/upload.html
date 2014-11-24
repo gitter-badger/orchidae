@@ -1,6 +1,7 @@
 <div ng-controller="SettingsController">
     <form method="POST" enctype="multipart/form-data"
           action="/picture">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         File to upload: <input type="file" name="file"><br/> Name: <input
             type="text" name="name"><br/> <br/> <input type="submit"
                                                        value="Upload"> Press here to upload the file!

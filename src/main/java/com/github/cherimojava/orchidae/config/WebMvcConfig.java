@@ -24,12 +24,14 @@ import java.util.Properties;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -79,6 +81,11 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 		return vc;
 	}
 
+	@Bean
+	public CommonsMultipartResolver filterMultipartResolver() {
+		return new CommonsMultipartResolver();
+	}
+
 	/**
 	 * actual resolver for the html files
 	 * 
@@ -94,19 +101,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 		vvw.setExposeSpringMacroHelpers(true);
 		return vvw;
 	}
-
-	/**
-	 * file upload config
-	 * 
-	 * @return
-	 */
-	// @Bean
-	// MultipartConfigElement multipartConfigElement() {
-	// MultipartConfigFactory factory = new MultipartConfigFactory();
-	// factory.setMaxFileSize("20MB");
-	// factory.setMaxRequestSize("20MB");
-	// return factory.createMultipartConfig();
-	// }
 
 	@Override
 	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {

@@ -18,19 +18,22 @@ package com.github.cherimojava.orchidae;
 import java.io.File;
 import java.io.IOException;
 
+import javax.servlet.MultipartConfigElement;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import com.github.cherimojava.orchidae.config.Markers;
 import com.github.cherimojava.orchidae.config.RootConfig;
+import com.github.cherimojava.orchidae.config.ServletListener;
 import com.github.cherimojava.orchidae.config.WebMvcConfig;
 
 /**
@@ -48,43 +51,26 @@ public class Starter {
 
 	public static void main(String[] args) throws Exception {
 		new Starter(getPort(args));
-
-		// DispatcherServlet servlet = new DispatcherServlet();
-		// // no explicit configuration reference here: everything is configured in
-		// // the root container for simplicity
-		// servlet.setContextConfigLocation("");
-		//
-		// ServletRegistration.Dynamic appServlet = servletContext.addServlet("appServlet", servlet);
-		// appServlet.setLoadOnStartup(1);
-		// appServlet.setAsyncSupported(true);
-		//
-		// Set<String> mappingConflicts = appServlet.addMapping("/");
-		// if (!mappingConflicts.isEmpty()) {
-		// throw new IllegalStateException("'appServlet' cannot be mapped to '/' under Tomcat versions <= 7.0.14");
-		// }
 	}
 
-	private WebApplicationContext getContext() {
+	private AnnotationConfigWebApplicationContext getContext() {
 		AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
 		// set the Production profile to be active
 		context.getEnvironment().setDefaultProfiles(RootConfig.PROFILE_PRODUCTION);
 		context.register(RootConfig.class, WebMvcConfig.class);
-		// context.setConfigLocation(RootConfig.class.getPackage().toString());
 		return context;
 	}
 
-	private ServletContextHandler getServletContextHandler(WebApplicationContext context) throws IOException {
+	private ServletContextHandler getServletContextHandler(AnnotationConfigWebApplicationContext context)
+			throws IOException {
 		ServletContextHandler servletContext = new ServletContextHandler();
-		// FilterRegistration.Dynamic characterEncodingFilter = servletContext.addFilter("characterEncodingFilter",
-		// new CharacterEncodingFilter());
-		// characterEncodingFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
-		// characterEncodingFilter.setInitParameter("encoding", "UTF-8");
-		// characterEncodingFilter.setInitParameter("forceEncoding", "true");
-		servletContext.addServlet(new ServletHolder("default", new DispatcherServlet(context)), "/*");
 		servletContext.addEventListener(new ContextLoaderListener(context));
+		ServletHolder holder = new ServletHolder("default", new DispatcherServlet(context));
+		holder.getRegistration().setMultipartConfig(new MultipartConfigElement("./tmp",20000000,20000000,200000));
+		servletContext.addServlet(holder, "/*");
+		servletContext.addEventListener(new ServletListener(context));
 		servletContext.setResourceBase(new FileSystemResource(new File("./")).toString());
-		// servletContext.addListener(new ContextLoaderListener(context));
-		// servletContext.setInitParameter("defaultHtmlEscape", "true");
+		servletContext.setSessionHandler(new SessionHandler());
 		return servletContext;
 	}
 

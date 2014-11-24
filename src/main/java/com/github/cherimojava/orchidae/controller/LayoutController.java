@@ -22,6 +22,7 @@ import java.security.MessageDigest;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -58,14 +59,15 @@ public class LayoutController {
 	@Autowired
 	private EntityFactory factory;
 	// switch to ajax requests http://blog.trifork.com/2014/03/20/web-forms-with-java-angularjs-and-other-approaches/
-	private static final List<String> formPages = ImmutableList.of("register", "login");
+	private static final List<String> formPages = ImmutableList.of("register", "login", "upload");
 
 	/**
 	 * Serves page layouts. Anything which ends with html is supposed to be a layout and will be handled through this
 	 * method
 	 */
 	@RequestMapping(value = "/**/{page}.html", method = GET)
-	public String layout(@PathVariable("page") String page, HttpServletRequest request, ModelMap map) {
+	public String layout(@PathVariable("page") String page, HttpSession session, HttpServletRequest request,
+			ModelMap map) {
 		if (formPages.contains(page)) {
 			// For form pages we have to add the csrf token
 			map.addAttribute("_csrf", request.getAttribute(CsrfToken.class.getName()));
