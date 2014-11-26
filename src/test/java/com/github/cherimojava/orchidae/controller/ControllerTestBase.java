@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.github.cherimojava.orchidae.config.RootConfig;
 import com.github.cherimojava.orchidae.config.WebMvcConfig;
@@ -31,6 +32,7 @@ import com.google.common.base.Joiner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { cfgMongo.class, WebMvcConfig.class })
 @ActiveProfiles(RootConfig.PROFILE_TESTING)
+@WebAppConfiguration
 public class ControllerTestBase {
 
 	public void assertJson(Matcher<? super String> expected, String actual) {

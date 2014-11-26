@@ -31,7 +31,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -53,6 +57,8 @@ public class _PictureController extends ControllerTestBase {
 	@Autowired
 	private MongoDatabase db;
 
+	private MockHttpSession session;
+
 	PictureController repo;
 
 	@Before
@@ -63,6 +69,13 @@ public class _PictureController extends ControllerTestBase {
 
 		mvc = MockMvcBuilders.standaloneSetup(repo).setMessageConverters(new EntityConverter(factory),
 				new StringHttpMessageConverter(), new ResourceHttpMessageConverter()).build();
+
+		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("test", "1");
+		SecurityContextHolder.getContext().setAuthentication(auth);
+
+		session = new MockHttpSession();
+		session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+				SecurityContextHolder.getContext());
 	}
 
 	@After
@@ -93,8 +106,8 @@ public class _PictureController extends ControllerTestBase {
 		// check that if some IOException happens we get it returned appropriate
 		repo.storagePath = null;
 		MockMultipartFile file = new MockMultipartFile("b", "b.png", "image/png", "nonsensecontent".getBytes());
-		mvc.perform(fileUpload("/picture").file(file).accept(MediaType.TEXT_HTML)).andExpect(status().isOk()).andExpect(
-				content().contentType(MediaType.TEXT_HTML)).andExpect(content().string(containsString("b.png")));
+		mvc.perform(fileUpload("/picture").file(file).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andExpect(
+				content().contentType(MediaType.APPLICATION_JSON)).andExpect(content().string(containsString("b.png")));
 	}
 
 	@Test
@@ -136,8 +149,8 @@ public class _PictureController extends ControllerTestBase {
 	private ResultActions createPicture(String name, String type) throws Exception {
 		MockMultipartFile file = new MockMultipartFile(name, name + "." + type, "image/" + type,
 				"nonsensecontent".getBytes());
-		return mvc.perform(fileUpload("/picture").file(file).accept(MediaType.TEXT_HTML)).andExpect(
-				status().isCreated()).andExpect(content().contentType(MediaType.TEXT_HTML));
+		return mvc.perform(fileUpload("/picture").file(file).accept(MediaType.APPLICATION_JSON).session(session)).andExpect(
+				status().isCreated()).andExpect(content().contentType(MediaType.APPLICATION_JSON));
 	}
 
 	private ResultActions getLatest(int count) throws Exception {
