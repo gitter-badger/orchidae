@@ -34,12 +34,14 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.github.cherimojava.data.mongo.entity.EntityFactory;
 import com.github.cherimojava.orchidae.entity.Picture;
+import com.github.cherimojava.orchidae.entity.User;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mongodb.client.MongoIterable;
@@ -136,7 +138,8 @@ public class PictureController {
 			MultipartFile file = request.getFile(it.next());
 			// Create uuid and Picture entity
 			Picture picture = factory.create(Picture.class);
-			// With Java 8 provide default method which allows to generate an id
+			User user = factory.load(User.class, SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+			picture.setUser(user);
 			picture.setTitle(StringUtils.split(file.getOriginalFilename(), ".")[0]);
 			picture.setId(Long.toHexString(rand.nextLong()));
 			picture.setOriginalName(file.getOriginalFilename());

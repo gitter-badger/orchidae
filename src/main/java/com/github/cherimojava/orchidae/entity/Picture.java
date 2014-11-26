@@ -15,14 +15,14 @@
  */
 package com.github.cherimojava.orchidae.entity;
 
-import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 
-import com.github.cherimojava.data.mongo.entity.annotation.Final;
 import org.joda.time.DateTime;
 
 import com.github.cherimojava.data.mongo.entity.Entity;
+import com.github.cherimojava.data.mongo.entity.annotation.Final;
 import com.github.cherimojava.data.mongo.entity.annotation.Id;
+import com.github.cherimojava.data.mongo.entity.annotation.Reference;
 
 /**
  * Picture object contains everything an Object needs to have
@@ -37,11 +37,13 @@ public interface Picture extends Entity<Picture> {
 
 	public Picture setId(String id);
 
-	@Final
+	// TODO final should work here too?
+	// @Final
 	@NotNull
-	public String getUser();
+	@Reference
+	public User getUser();
 
-	public Picture setUser(String user);
+	public Picture setUser(User user);
 
 	public String getTitle();
 

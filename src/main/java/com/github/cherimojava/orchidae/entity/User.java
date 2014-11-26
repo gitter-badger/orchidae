@@ -28,8 +28,8 @@ import com.github.cherimojava.data.mongo.entity.annotation.Id;
  */
 public interface User extends Entity<User> {
 
-	@NotNull
 	@Id
+	@NotNull
 	public String getUsername();
 
 	public User setUsername(String username);
