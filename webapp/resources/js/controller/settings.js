@@ -16,6 +16,10 @@ var orchidae = angular.module('orchidae');
         $scope.availLang = function () {
             return ['us','de']
         };
+
+        $scope.isActive = function (viewLocation) {
+                return viewLocation === $location.path();
+        };
     });
 
 }());

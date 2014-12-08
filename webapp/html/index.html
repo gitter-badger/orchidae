@@ -30,18 +30,18 @@
             </div>
             <div>
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#/upload">
+                    <li ng-class="{ active: isActive('/upload')}"><a href="#/upload">
                         <msg key="main.upload"/>
                     </a></li>
-                    <li><a href="#/stream">
+                    <li ng-class="{ active: isActive('/stream')}"><a href="#/stream">
                         <msg key="main.photostream"/>
                     </a></li>
-                    <li><a href="#/albums">
+                    <li ng-class="{ active: isActive('/albums')}"><a href="#/albums">
                         <msg key="main.album"/>
                     </a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#/login">
+                    <li ng-class="{ active: isActive('/login')}"><a href="#/login">
                         <msg key="main.login"/>
                     </a></li>
                     <li dropdown class="dropdown">
