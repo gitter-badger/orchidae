@@ -20,11 +20,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -75,9 +75,10 @@ public class PictureController {
 	@Autowired
 	EntityFactory factory;
 
-	private Random rand = new Random();
-
 	private Logger LOG = LogManager.getLogger();
+
+	private char[] hex = new char[] { 'a', 'b', 'c', 'd', 'e', 'f', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+			'0' };
 
 	/**
 	 * Returns a list (json) with the {number} most recent photos of the given {user}.
@@ -168,7 +169,7 @@ public class PictureController {
 			User user = factory.load(User.class, SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 			picture.setUser(user);
 			picture.setTitle(StringUtils.split(file.getOriginalFilename(), ".")[0]);
-			picture.setId(Long.toHexString(rand.nextLong()));
+			picture.setId(RandomStringUtils.random(16, hex));
 			picture.setOriginalName(file.getOriginalFilename());
 			picture.setUploaded(DateTime.now());
 

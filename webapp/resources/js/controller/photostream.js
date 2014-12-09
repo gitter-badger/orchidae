@@ -7,7 +7,6 @@ var orchidae = angular.module('orchidae');
         $scope.photos = [];
         $http.get('picture/admin/latest',{headers: {'Accept': 'application/json'}}).success(function(root) {
             $scope.photos = root;
-            console.log($scope.photos);
         });
     });
 
