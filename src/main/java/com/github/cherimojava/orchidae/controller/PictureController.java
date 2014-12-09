@@ -15,17 +15,21 @@
  */
 package com.github.cherimojava.orchidae.controller;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import javax.imageio.ImageIO;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.imgscalr.Scalr;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,6 +68,9 @@ public class PictureController {
 
 	@Value("${picture.path:./pictures}")
 	String storagePath;
+
+	@Value("${picture.thumbnail.maxHeight:150}")
+	int maxHeight;
 
 	@Autowired
 	EntityFactory factory;
@@ -111,15 +118,26 @@ public class PictureController {
 	 * @since 1.0.0
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/{user}/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
-	public ResponseEntity<Resource> getPicture(@PathVariable("user") String user, @PathVariable("id") String id)
+	@RequestMapping(value = "/{user}/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE, params = { "f=t" })
+	public ResponseEntity<Resource> getPictureThumbnail(@PathVariable("user") String user, @PathVariable("id") String id)
 			throws IOException {
+		return _getPicture(user, id, "_t");
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/{user}/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
+	public ResponseEntity<Resource> getPictureOriginal(@PathVariable("user") String user, @PathVariable("id") String id)
+			throws IOException {
+		return _getPicture(user, id, "");
+	}
+
+	private ResponseEntity<Resource> _getPicture(String user, String id, String type) throws IOException {
 		if (!StringUtils.isAlphanumeric(id)) {
 			LOG.debug("got non alphanumeric id {}", id);
 			// we're a bit more generous on whats accepted but that won't hurt either
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		File picture = new File(storagePath, id);
+		File picture = new File(storagePath, id + type);
 		if (picture.exists()) {
 			return new ResponseEntity<Resource>(new InputStreamResource(FileUtils.openInputStream(picture)),
 					HttpStatus.OK);
@@ -153,11 +171,21 @@ public class PictureController {
 			picture.setId(Long.toHexString(rand.nextLong()));
 			picture.setOriginalName(file.getOriginalFilename());
 			picture.setUploaded(DateTime.now());
+
+			String type = StringUtils.substringAfterLast(file.getOriginalFilename(), ".");
+
 			try {
-				file.transferTo(new File(storagePath + "/" + picture.getId()));
+				File storedPicture = new File(storagePath, picture.getId());
+				// save picture
+				file.transferTo(storedPicture);
+
+				// read some some properties from it
+				BufferedImage image = ImageIO.read(storedPicture);
+				picture.setHeight(image.getHeight());
+				picture.setWidth(image.getWidth());
+				createThumbnail(picture.getId(), image, type);
 				LOG.info("Uploaded {} and assigned id {}", file.getOriginalFilename(), picture.getId());
 				// TODO can't put everything into one folder
-				// TODO need to create thumbnails
 				picture.save();
 			} catch (Exception e) {
 				LOG.warn("failed to store picture", e);
@@ -169,6 +197,26 @@ public class PictureController {
 		} else {
 			return new ResponseEntity<>("Could not upload all files. Failed to upload: "
 					+ Joiner.on(",").join(badFiles), HttpStatus.OK);
+		}
+	}
+
+	/**
+	 * creates the Thumbnail for the given picture and stores it on the disk
+	 * 
+	 * @param id
+	 * @param image
+	 * @param type
+	 */
+	private void createThumbnail(String id, BufferedImage image, String type) {
+		int height = image.getHeight();
+		int width = image.getWidth();
+		double scale = maxHeight / (double) height;
+		BufferedImage thumbnail = Scalr.resize(image, Scalr.Method.ULTRA_QUALITY,
+				((Double) (width * scale)).intValue(), ((Double) (height * scale)).intValue(), Scalr.OP_ANTIALIAS);
+		try {
+			ImageIO.write(thumbnail, type, new File(storagePath, id + "_t"));
+		} catch (IOException e) {
+			LOG.error("failed to create thumbnail for picture", e);
 		}
 	}
 }

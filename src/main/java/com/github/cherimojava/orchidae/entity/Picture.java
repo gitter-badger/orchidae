@@ -57,4 +57,14 @@ public interface Picture extends Entity<Picture> {
 	public DateTime getUploaded();
 
 	public Picture setUploaded(DateTime uploadTime);
+
+	@Final
+	public int getWidth();
+
+	public Picture setWidth(int width);
+
+	@Final
+	public int getHeight();
+
+	public Picture setHeight(int height);
 }

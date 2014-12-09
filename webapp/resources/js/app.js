@@ -16,6 +16,9 @@ orchidae.config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/register', {
         templateUrl: '/register.html'
     });
+    $routeProvider.when('/stream', {
+        templateUrl: '/stream.html'
+    });
 }]);
 
 //main controller, controlling some basic side stuff
@@ -41,5 +44,14 @@ var orchidae = angular.module('orchidae');
                 return viewLocation === $location.path();
         };
     });
-
 }());
+
+(function(){
+var orchidae = angular.module('orchidae');
+
+orchidae.filter('reverse', function() {
+  return function(items) {
+    return items.slice().reverse();
+  };
+});
+}())

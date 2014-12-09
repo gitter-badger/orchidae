@@ -27,3 +27,12 @@ nav.navbar {
     height:100%;
     width:100%;
 }
+
+div.photostream {
+    display: inline;
+    margin:0;
+}
+
+div.photostream img {
+    margin-top:3px;
+}

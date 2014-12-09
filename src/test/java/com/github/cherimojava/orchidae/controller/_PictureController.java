@@ -157,7 +157,6 @@ public class _PictureController extends ControllerTestBase {
 		createPicture("one", "png");
 		String resp = getLatest(1).andReturn().getResponse().getContentAsString();
 		JsonNode json = new ObjectMapper().reader().readTree(resp);
-		System.out.println(json);
 		String id = json.get(0).get("_id").asText();
 		mvc.perform(get(url(id))).andExpect(status().isOk());
 		mvc.perform(get(url("../" + id))).andExpect(status().isNotFound());

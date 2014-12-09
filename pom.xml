@@ -202,6 +202,7 @@
             <groupId>com.github.cschoell</groupId>
             <artifactId>junit-dynamicsuite</artifactId>
         </dependency>
+        <!--jackson test dependencies-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
@@ -213,6 +214,13 @@
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
             <scope>test</scope>
+        </dependency>
+        <!--simple image transformation-->
+        <dependency>
+            <groupId>org.imgscalr</groupId>
+            <artifactId>imgscalr-lib</artifactId>
+            <version>4.2</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
 
