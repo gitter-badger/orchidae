@@ -25,8 +25,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.bson.Document;
 import org.junit.After;
@@ -68,15 +72,15 @@ public class _PictureController extends ControllerTestBase {
 
 	private MockHttpSession session;
 
-	PictureController repo;
+	PictureController controller;
 
 	@Before
 	public void setup() {
-		repo = new PictureController();
-		repo.factory = factory;
-		repo.storagePath = "./target";
+		controller = new PictureController();
+		controller.factory = factory;
+		controller.storagePath = "./target";
 
-		mvc = MockMvcBuilders.standaloneSetup(repo).setMessageConverters(new EntityConverter(factory),
+		mvc = MockMvcBuilders.standaloneSetup(controller).setMessageConverters(new EntityConverter(factory),
 				new StringHttpMessageConverter(), new ResourceHttpMessageConverter()).build();
 
 		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("test", "1");
@@ -113,7 +117,7 @@ public class _PictureController extends ControllerTestBase {
 				jsonPath("$[1].originalName", is("b.png")));
 
 		// check that if some IOException happens we get it returned appropriate
-		repo.storagePath = null;
+		controller.storagePath = null;
 		MockMultipartFile file = new MockMultipartFile("b", "b.png", "image/png", "nonsensecontent".getBytes());
 		mvc.perform(fileUpload("/picture").file(file).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andExpect(
 				content().contentType(MediaType.APPLICATION_JSON)).andExpect(content().string(containsString("b.png")));
@@ -129,7 +133,29 @@ public class _PictureController extends ControllerTestBase {
 		MvcResult result = getLatest(10).andReturn();
 		List<Picture> pictures = factory.readList(Picture.class, result.getResponse().getContentAsString());
 		assertEquals(pictures.size(), 1);
-		mvc.perform(get(url(pictures.get(0).getId()))).andExpect(status().isOk());
+		ByteArrayInputStream bais = new ByteArrayInputStream(mvc.perform(get(url(pictures.get(0).getId()))).andExpect(
+				status().isOk()).andReturn().getResponse().getContentAsByteArray());
+		BufferedImage image = ImageIO.read(bais);
+		assertEquals(42, image.getWidth());
+		assertEquals(42, image.getHeight());
+	}
+
+	@Test
+	public void getThumbnail() throws Exception {
+		controller.maxHeight = 10;
+		// verify no picture there
+		mvc.perform(get(url("acd3131"))).andExpect(status().isNotFound());
+		// upload one picture
+		createPicture("test", "jpeg");
+		// retrieve its id
+		MvcResult result = getLatest(10).andReturn();
+		List<Picture> pictures = factory.readList(Picture.class, result.getResponse().getContentAsString());
+		assertEquals(pictures.size(), 1);
+		ByteArrayInputStream bais = new ByteArrayInputStream(
+				mvc.perform(get(url(pictures.get(0).getId() + "?f=t"))).andExpect(status().isOk()).andReturn().getResponse().getContentAsByteArray());
+		BufferedImage image = ImageIO.read(bais);
+		assertEquals(10, image.getWidth());
+		assertEquals(10, image.getHeight());
 	}
 
 	@Test
@@ -142,7 +168,7 @@ public class _PictureController extends ControllerTestBase {
 		getLatest(10).andExpect(jsonPath("$", hasSize(2)));
 
 		// lower limit and check that only one is returned
-		repo.latestPictureLimit = 1;
+		controller.latestPictureLimit = 1;
 		getLatest(10).andExpect(jsonPath("$", hasSize(1)));
 	}
 
@@ -163,6 +189,7 @@ public class _PictureController extends ControllerTestBase {
 		String id = json.get(0).get("_id").asText();
 		mvc.perform(get(url(id))).andExpect(status().isOk());
 		mvc.perform(get(url("../" + id))).andExpect(status().isNotFound());
+		mvc.perform(get(url(id + "g"))).andExpect(status().isNotFound());
 	}
 
 	private ResultActions createPicture(String name, String type) throws Exception {

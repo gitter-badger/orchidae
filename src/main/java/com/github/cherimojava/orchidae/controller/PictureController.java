@@ -89,8 +89,8 @@ public class PictureController {
 	 * @return picture json list with the latest pictures
 	 * @since 1.0.0
 	 */
-	@RequestMapping(value = "/{user}/latest/{number}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<Picture> picturesOption(String user, @PathVariable("number") Integer number) {
+	@RequestMapping(value = "/{user}/latest/{number:[0-9]+}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Picture> picturesOption(@PathVariable("user") String user, @PathVariable("number") Integer number) {
 		if (number > latestPictureLimit) {
 			LOG.info("latest picture request was ({}) greater than max allowed {}. Only returning max", number,
 					latestPictureLimit);
@@ -101,6 +101,11 @@ public class PictureController {
 		MongoIterable<Picture> it = factory.getCollection(Picture.class).find(Picture.class).limit(number).sort(
 				new Document("uploaded", 1));
 		return Lists.newArrayList(it);
+	}
+
+	@RequestMapping(value = "/{user}/latest", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Picture> pictures(@PathVariable("user") String user) {
+		return picturesOption(user, latestPictureLimit);
 	}
 
 	// TODO check that only pictures visible to user are handed out
@@ -118,25 +123,20 @@ public class PictureController {
 	 * @since 1.0.0
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/{user}/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE, params = { "f=t" })
+	@RequestMapping(value = "/{user}/{id:[a-f0-9]+}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE, params = { "f=t" })
 	public ResponseEntity<Resource> getPictureThumbnail(@PathVariable("user") String user, @PathVariable("id") String id)
 			throws IOException {
 		return _getPicture(user, id, "_t");
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/{user}/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
+	@RequestMapping(value = "/{user}/{id:[a-f0-9]+}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
 	public ResponseEntity<Resource> getPictureOriginal(@PathVariable("user") String user, @PathVariable("id") String id)
 			throws IOException {
 		return _getPicture(user, id, "");
 	}
 
-	private ResponseEntity<Resource> _getPicture(String user, String id, String type) throws IOException {
-		if (!StringUtils.isAlphanumeric(id)) {
-			LOG.debug("got non alphanumeric id {}", id);
-			// we're a bit more generous on whats accepted but that won't hurt either
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+	protected ResponseEntity<Resource> _getPicture(String user, String id, String type) throws IOException {
 		File picture = new File(storagePath, id + type);
 		if (picture.exists()) {
 			return new ResponseEntity<Resource>(new InputStreamResource(FileUtils.openInputStream(picture)),
