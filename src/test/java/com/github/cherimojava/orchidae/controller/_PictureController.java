@@ -117,7 +117,6 @@ public class _PictureController extends ControllerTestBase {
 				jsonPath("$[1].originalName", is("b.png")));
 
 		// check that if some IOException happens we get it returned appropriate
-		controller.storagePath = null;
 		MockMultipartFile file = new MockMultipartFile("b", "b.png", "image/png", "nonsensecontent".getBytes());
 		mvc.perform(fileUpload("/picture").file(file).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andExpect(
 				content().contentType(MediaType.APPLICATION_JSON)).andExpect(content().string(containsString("b.png")));
