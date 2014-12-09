@@ -25,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.bson.Document;
@@ -32,6 +33,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -44,6 +46,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.StreamUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -163,10 +166,13 @@ public class _PictureController extends ControllerTestBase {
 	}
 
 	private ResultActions createPicture(String name, String type) throws Exception {
-		MockMultipartFile file = new MockMultipartFile(name, name + "." + type, "image/" + type,
-				"nonsensecontent".getBytes());
-		return mvc.perform(fileUpload("/picture").file(file).accept(MediaType.APPLICATION_JSON).session(session)).andExpect(
-				status().isCreated()).andExpect(content().contentType(MediaType.APPLICATION_JSON));
+		try (InputStream s = new ClassPathResource("gradient.png").getInputStream();) {
+
+			byte[] bytes = StreamUtils.copyToByteArray(s);
+			MockMultipartFile file = new MockMultipartFile(name, name + "." + type, "image/" + type, bytes);
+			return mvc.perform(fileUpload("/picture").file(file).accept(MediaType.APPLICATION_JSON).session(session)).andExpect(
+					status().isCreated()).andExpect(content().contentType(MediaType.APPLICATION_JSON));
+		}
 	}
 
 	private ResultActions getLatest(int count) throws Exception {
