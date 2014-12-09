@@ -82,8 +82,8 @@ public class PictureController {
 	 * @return picture json list with the latest pictures
 	 * @since 1.0.0
 	 */
-	@RequestMapping(value = "/{user}/latest/{number}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public List<Picture> pictures(String user, @PathVariable("number") Integer number) {
+	@RequestMapping(value = "/{user}/latest/{number}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Picture> picturesOption(String user, @PathVariable("number") Integer number) {
 		if (number > latestPictureLimit) {
 			LOG.info("latest picture request was ({}) greater than max allowed {}. Only returning max", number,
 					latestPictureLimit);
