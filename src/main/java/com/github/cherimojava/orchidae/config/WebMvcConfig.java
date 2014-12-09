@@ -28,8 +28,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -106,7 +106,8 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
 		converters.add(entityConverter(factory));
 		converters.add(new StringHttpMessageConverter());
-		converters.add(new ByteArrayHttpMessageConverter());
+		converters.add(new ResourceHttpMessageConverter());
+		// converters.add(new ByteArrayHttpMessageConverter());
 		super.configureMessageConverters(converters);
 	}
 

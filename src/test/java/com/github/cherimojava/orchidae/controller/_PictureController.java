@@ -15,11 +15,15 @@
  */
 package com.github.cherimojava.orchidae.controller;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
 
@@ -41,6 +45,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.cherimojava.data.mongo.entity.EntityFactory;
 import com.github.cherimojava.data.spring.EntityConverter;
 import com.github.cherimojava.orchidae.entity.Picture;
@@ -144,6 +150,17 @@ public class _PictureController extends ControllerTestBase {
 		createPicture("two", "jpg");
 		getLatest(10).andExpect(jsonPath("$[0].originalName", is("one.png"))).andExpect(
 				jsonPath("$[1].originalName", is("two.jpg")));
+	}
+
+	@Test
+	public void onlyAlphanum() throws Exception {
+		createPicture("one", "png");
+		String resp = getLatest(1).andReturn().getResponse().getContentAsString();
+		JsonNode json = new ObjectMapper().reader().readTree(resp);
+		System.out.println(json);
+		String id = json.get(0).get("_id").asText();
+		mvc.perform(get(url(id))).andExpect(status().isOk());
+		mvc.perform(get(url("../" + id))).andExpect(status().isNotFound());
 	}
 
 	private ResultActions createPicture(String name, String type) throws Exception {

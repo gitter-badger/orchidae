@@ -22,6 +22,7 @@
         <jetty.version>9.1.0.v20131115</jetty.version>
         <jetty.jsp.version>9.1.0.v20131115</jetty.jsp.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
+        <jackson.version>2.4.3</jackson.version>
     </properties>
 
     <dependencies>
@@ -200,6 +201,18 @@
         <dependency>
             <groupId>com.github.cschoell</groupId>
             <artifactId>junit-dynamicsuite</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

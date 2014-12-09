@@ -35,7 +35,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -110,6 +114,11 @@ public class PictureController {
 	@RequestMapping(value = "/{user}/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
 	public ResponseEntity<Resource> getPicture(@PathVariable("user") String user, @PathVariable("id") String id)
 			throws IOException {
+		if (!StringUtils.isAlphanumeric(id)) {
+			LOG.debug("got non alphanumeric id {}", id);
+			// we're a bit more generous on whats accepted but that won't hurt either
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 		File picture = new File(storagePath, id);
 		if (picture.exists()) {
 			return new ResponseEntity<Resource>(new InputStreamResource(FileUtils.openInputStream(picture)),
