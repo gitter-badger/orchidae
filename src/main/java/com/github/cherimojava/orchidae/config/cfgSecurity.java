@@ -35,7 +35,7 @@ public class cfgSecurity extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		// Temporary disable csrf
-		http.csrf().disable().authorizeRequests().antMatchers("/picture").authenticated().anyRequest().permitAll().and().formLogin().loginPage(
+		http.authorizeRequests().antMatchers("/picture").authenticated().anyRequest().permitAll().and().formLogin().loginPage(
 				"/#/login").permitAll().loginProcessingUrl("/login.form");
 	}
 

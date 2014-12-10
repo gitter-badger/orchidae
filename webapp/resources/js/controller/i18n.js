@@ -35,4 +35,10 @@
             }
         };
     });
+
+    orchidae.filter('i18n',function() {
+        return function(key) {
+            return $.i18n.prop(key);
+        };
+    });
 }());

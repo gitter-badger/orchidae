@@ -12,7 +12,7 @@
         <div><label>
             <msg key="register.passwordRepeat"/>
             : <input type="password" data-ng-model="data.password2"/> </label></div>
-        <div><input type="button" value="Register" data-ng-click="submit('register')"/></div>
+        <div><input type="button" value="{{'register.submit' | i18n}}" data-ng-click="submit('register')"/></div>
         <input type="hidden" data-ng-model="$_csrf.parameterName" name="$_csrf.parameterName" value="${_csrf.token}"/>
     </form>
 </div>

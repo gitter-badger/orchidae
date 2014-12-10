@@ -54,7 +54,7 @@ public class LayoutController {
 
 	@Autowired
 	private EntityFactory factory;
-	// switch to ajax requests http://blog.trifork.com/2014/03/20/web-forms-with-java-angularjs-and-other-approaches/
+
 	private static final List<String> formPages = ImmutableList.of("register", "login", "upload");
 
 	/**
