@@ -86,13 +86,13 @@ public class LayoutController {
 		return "index";
 	}
 
-	private String registerUser(HttpServletRequest request) {
-		// this needs a hell of improvement
+	private ResponseEntity registerUser(HttpServletRequest request) {
+		// TODO send messages out if something isn't right
 		if (StringUtils.isEmpty(request.getParameter("username"))) {
-			return "redirect:/";
+			return new ResponseEntity(HttpStatus.BAD_REQUEST);
 		}
 		if (factory.load(User.class, request.getParameter("username")) != null) {
-			return "redirect:/";
+			return new ResponseEntity(HttpStatus.BAD_REQUEST);
 		}
 		String pwd = request.getParameter("password");
 		if (StringUtils.isNotEmpty(pwd) && pwd.equals(request.getParameter("password2"))) {
@@ -102,6 +102,6 @@ public class LayoutController {
 			newUser.setPassword(pwEncoder.encode(pwd));
 			newUser.save();
 		}
-		return "redirect:/";
+		return new ResponseEntity(HttpStatus.NO_CONTENT);
 	}
 }

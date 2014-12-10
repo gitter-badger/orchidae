@@ -1,10 +1,10 @@
-<div class="login">
+<div class="login" data-ng-controller="FormsController">
     <form action="/register.form" method="post">
-        <div><label> User Name : <input type="text" name="username"/> </label></div>
-        <div><label>Email: <input type="text" name="email"/></label></div>
-        <div><label> Password: <input type="password" name="password"/> </label></div>
-        <div><label>Repeat Password: <input type="password" name="password2"/> </label></div>
-        <div><input type="submit" value="Register"/></div>
-        <input type="hidden" name="$_csrf.parameterName" value="${_csrf.token}"/>
+        <div><label> User Name : <input type="text" data-ng-model="data.username"/> </label></div>
+        <div><label>Email: <input type="text" data-ng-model="data.email"/></label></div>
+        <div><label> Password: <input type="password" data-ng-model="data.password"/> </label></div>
+        <div><label>Repeat Password: <input type="password" data-ng-model="data.password2"/> </label></div>
+        <div><input type="button" value="Register" data-ng-click="submit('register')"/></div>
+        <input type="hidden" data-ng-model="$_csrf.parameterName" name="$_csrf.parameterName" value="${_csrf.token}"/>
     </form>
 </div>

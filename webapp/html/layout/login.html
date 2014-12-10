@@ -1,9 +1,8 @@
-<div class="login">
-    <form
-            action="/login.form" method="post">
-        <div><label> User Name : <input type="text" name="username"/> </label></div>
-        <div><label> Password: <input type="password" name="password"/> </label></div>
-        <div><input type="submit" value="Sign In"/></div>
+<div class="login" data-ng-controller="FormsController">
+    <form action="/login.form" method="post">
+        <div><label> User Name : <input type="text" data-ng-model="data.username"/> </label></div>
+        <div><label> Password: <input type="password" data-ng-model="data.password"/> </label></div>
+        <div><input type="button" data-ng-click="submit('login')" value="Sign In"/></div>
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     </form>
     <a href="#/register">Have no account yet? Sign up!</a>
