@@ -35,6 +35,7 @@ public class cfgSecurity extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		// Temporary disable csrf
+		//https://thomas.rabaix.net/blog/2013/05/csrf-token-security-with-angularjs
 		http.authorizeRequests().antMatchers("/picture").authenticated().anyRequest().permitAll().and().formLogin().loginPage(
 				"/#/login").permitAll().loginProcessingUrl("/login.form");
 	}

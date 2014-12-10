@@ -57,6 +57,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.cherimojava.data.mongo.entity.EntityFactory;
 import com.github.cherimojava.data.spring.EntityConverter;
 import com.github.cherimojava.orchidae.entity.Picture;
+import com.github.cherimojava.orchidae.util.FileUtil;
 import com.mongodb.client.MongoDatabase;
 
 public class _PictureController extends ControllerTestBase {
@@ -70,6 +71,9 @@ public class _PictureController extends ControllerTestBase {
 	@Autowired
 	private MongoDatabase db;
 
+	@Autowired
+	FileUtil fileUtil;
+
 	private MockHttpSession session;
 
 	PictureController controller;
@@ -78,6 +82,7 @@ public class _PictureController extends ControllerTestBase {
 	public void setup() {
 		controller = new PictureController();
 		controller.factory = factory;
+		controller.fileUtil = fileUtil;
 
 		mvc = MockMvcBuilders.standaloneSetup(controller).setMessageConverters(new EntityConverter(factory),
 				new StringHttpMessageConverter(), new ResourceHttpMessageConverter()).build();
