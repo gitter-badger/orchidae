@@ -24,5 +24,4 @@ var orchidae = angular.module('orchidae');
           });
           };
     });
-
 }());

@@ -9,5 +9,4 @@ var orchidae = angular.module('orchidae');
             $scope.photos = root;
         });
     });
-
 }());
