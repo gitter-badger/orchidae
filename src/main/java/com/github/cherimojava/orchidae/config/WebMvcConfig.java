@@ -16,8 +16,6 @@
 package com.github.cherimojava.orchidae.config;
 
 import java.io.File;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Properties;
 
@@ -41,7 +39,6 @@ import org.springframework.web.servlet.view.velocity.VelocityViewResolver;
 
 import com.github.cherimojava.data.mongo.entity.EntityFactory;
 import com.github.cherimojava.data.spring.EntityConverter;
-import com.github.cherimojava.orchidae.util.FileUtil;
 
 /**
  * MvcConfiguration
@@ -114,12 +111,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
 	public EntityConverter entityConverter(EntityFactory factory) {
 		return new EntityConverter(factory);
-	}
-
-	// TODO still needed?
-	@Bean
-	public MessageDigest messageDigest() throws NoSuchAlgorithmException {
-		return MessageDigest.getInstance("SHA-256");
 	}
 
 	@Bean

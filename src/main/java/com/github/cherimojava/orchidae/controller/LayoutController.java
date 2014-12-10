@@ -18,7 +18,6 @@ package com.github.cherimojava.orchidae.controller;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import java.security.MessageDigest;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,9 +48,6 @@ import com.google.common.collect.ImmutableList;
 public class LayoutController {
 
 	private static Logger LOG = LogManager.getLogger();
-
-	@Autowired
-	MessageDigest md;
 
 	@Autowired
 	PasswordEncoder pwEncoder;
