@@ -17,6 +17,7 @@ package com.github.cherimojava.orchidae.controller;
 
 import static org.junit.Assert.assertThat;
 
+import com.github.cherimojava.orchidae.TestBase;
 import org.hamcrest.Matcher;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ActiveProfiles;
@@ -33,7 +34,7 @@ import com.google.common.base.Joiner;
 @ContextConfiguration(classes = { cfgMongo.class, WebMvcConfig.class })
 @ActiveProfiles(RootConfig.PROFILE_TESTING)
 @WebAppConfiguration
-public class ControllerTestBase {
+public class ControllerTestBase extends TestBase {
 
 	public void assertJson(Matcher<? super String> expected, String actual) {
 		assertThat(actual, expected);

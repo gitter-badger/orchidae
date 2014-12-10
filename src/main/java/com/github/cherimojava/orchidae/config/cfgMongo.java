@@ -32,6 +32,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import com.github.cherimojava.data.mongo.entity.EntityFactory;
+import com.github.cherimojava.orchidae.util.FileUtil;
 import com.google.common.base.Throwables;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
@@ -40,7 +41,14 @@ import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.*;
+import de.flapdoodle.embed.mongo.config.ArtifactStoreBuilder;
+import de.flapdoodle.embed.mongo.config.DownloadConfigBuilder;
+import de.flapdoodle.embed.mongo.config.IMongodConfig;
+import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
+import de.flapdoodle.embed.mongo.config.Net;
+import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
+import de.flapdoodle.embed.mongo.config.Storage;
+import de.flapdoodle.embed.mongo.config.Timeout;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.config.IRuntimeConfig;
 import de.flapdoodle.embed.process.config.io.ProcessOutput;
@@ -79,6 +87,11 @@ public class cfgMongo {
 	@Bean
 	public File logPath() {
 		return new File(logPath);
+	}
+
+	@Bean
+	public FileUtil fileSeparator() {
+		return new FileUtil();
 	}
 
 	@Bean

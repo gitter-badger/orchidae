@@ -15,6 +15,8 @@
  */
 package com.github.cherimojava.orchidae.controller;
 
+import static com.github.cherimojava.orchidae.util.FileUtil.generateId;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +26,6 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,6 +51,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.github.cherimojava.data.mongo.entity.EntityFactory;
 import com.github.cherimojava.orchidae.entity.Picture;
 import com.github.cherimojava.orchidae.entity.User;
+import com.github.cherimojava.orchidae.util.FileUtil;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mongodb.client.MongoIterable;
@@ -66,19 +68,16 @@ public class PictureController {
 	@Value("${limit.latestPictures:30}")
 	int latestPictureLimit;
 
-	@Value("${picture.path:./pictures}")
-	String storagePath;
-
 	@Value("${picture.thumbnail.maxHeight:150}")
 	int maxHeight;
 
 	@Autowired
 	EntityFactory factory;
 
-	private Logger LOG = LogManager.getLogger();
+	@Autowired
+	FileUtil fileUtil;
 
-	private char[] hex = new char[] { 'a', 'b', 'c', 'd', 'e', 'f', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-			'0' };
+	private Logger LOG = LogManager.getLogger();
 
 	/**
 	 * Returns a list (json) with the {number} most recent photos of the given {user}.
@@ -138,7 +137,7 @@ public class PictureController {
 	}
 
 	protected ResponseEntity<Resource> _getPicture(String user, String id, String type) throws IOException {
-		File picture = new File(storagePath, id + type);
+		File picture = fileUtil.getFileHandle(id + type);
 		if (picture.exists()) {
 			return new ResponseEntity<Resource>(new InputStreamResource(FileUtils.openInputStream(picture)),
 					HttpStatus.OK);
@@ -169,14 +168,14 @@ public class PictureController {
 			User user = factory.load(User.class, SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 			picture.setUser(user);
 			picture.setTitle(StringUtils.split(file.getOriginalFilename(), ".")[0]);
-			picture.setId(RandomStringUtils.random(16, hex));
+			picture.setId(generateId());
 			picture.setOriginalName(file.getOriginalFilename());
 			picture.setUploaded(DateTime.now());
 
 			String type = StringUtils.substringAfterLast(file.getOriginalFilename(), ".");
 
 			try {
-				File storedPicture = new File(storagePath, picture.getId());
+				File storedPicture = fileUtil.getFileHandle(picture.getId());
 				// save picture
 				file.transferTo(storedPicture);
 
@@ -215,7 +214,7 @@ public class PictureController {
 		BufferedImage thumbnail = Scalr.resize(image, Scalr.Method.ULTRA_QUALITY,
 				((Double) (width * scale)).intValue(), ((Double) (height * scale)).intValue(), Scalr.OP_ANTIALIAS);
 		try {
-			ImageIO.write(thumbnail, type, new File(storagePath, id + "_t"));
+			ImageIO.write(thumbnail, type, fileUtil.getFileHandle(id + "_t"));
 		} catch (IOException e) {
 			LOG.error("failed to create thumbnail for picture", e);
 		}

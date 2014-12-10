@@ -78,7 +78,6 @@ public class _PictureController extends ControllerTestBase {
 	public void setup() {
 		controller = new PictureController();
 		controller.factory = factory;
-		controller.storagePath = "./target";
 
 		mvc = MockMvcBuilders.standaloneSetup(controller).setMessageConverters(new EntityConverter(factory),
 				new StringHttpMessageConverter(), new ResourceHttpMessageConverter()).build();

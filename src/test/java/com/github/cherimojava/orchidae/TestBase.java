@@ -15,25 +15,5 @@
  */
 package com.github.cherimojava.orchidae;
 
-import org.junit.extensions.dynamicsuite.ClassPath;
-import org.junit.extensions.dynamicsuite.Filter;
-import org.junit.extensions.dynamicsuite.TestClassFilter;
-import org.junit.extensions.dynamicsuite.suite.DynamicSuite;
-import org.junit.runner.RunWith;
-
-@RunWith(DynamicSuite.class)
-@ClassPath
-@Filter(Suite.class)
-public class Suite implements TestClassFilter {
-
-	@Override
-	public boolean include(String className) {
-		String[] parts = className.split("\\.");
-		return parts.length != 0 && parts[parts.length - 1].startsWith("_");
-	}
-
-	@Override
-	public boolean include(@SuppressWarnings("rawtypes") Class clazz) {
-		return (TestBase.class.isAssignableFrom(clazz));
-	}
+public class TestBase {
 }

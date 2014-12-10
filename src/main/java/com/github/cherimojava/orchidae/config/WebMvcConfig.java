@@ -41,6 +41,7 @@ import org.springframework.web.servlet.view.velocity.VelocityViewResolver;
 
 import com.github.cherimojava.data.mongo.entity.EntityFactory;
 import com.github.cherimojava.data.spring.EntityConverter;
+import com.github.cherimojava.orchidae.util.FileUtil;
 
 /**
  * MvcConfiguration
@@ -115,6 +116,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 		return new EntityConverter(factory);
 	}
 
+	// TODO still needed?
 	@Bean
 	public MessageDigest messageDigest() throws NoSuchAlgorithmException {
 		return MessageDigest.getInstance("SHA-256");
