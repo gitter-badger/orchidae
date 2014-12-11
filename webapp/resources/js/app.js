@@ -26,26 +26,36 @@ orchidae.config(['$routeProvider', function($routeProvider) {
 (function() {
   var orchidae = angular.module('orchidae');
 
-  orchidae.controller('MainController', function($scope, $rootScope, $http,
-          i18n, $location) {
-    $scope.language = function() {
-      return i18n.language;
-    };
-    $scope.setLanguage = function(lang) {
-      var langElement = angular.element(document.querySelector('#langToggle'));
-      langElement.removeClass("flag-icon-" + i18n.language);
-      langElement.addClass("flag-icon-" + lang);
-      i18n.setLanguage(lang);
-    };
+  orchidae
+          .controller(
+                  'MainController',
+                  function($scope, $rootScope, $http, i18n, $location) {
+                    $scope.language = function() {
+                      return i18n.language;
+                    };
+                    $scope.setLanguage = function(lang) {
+                      var langElement = angular.element(document
+                              .querySelector('#langToggle'));
+                      langElement.removeClass("flag-icon-" + i18n.language);
+                      langElement.addClass("flag-icon-" + lang);
+                      i18n.setLanguage(lang);
+                    };
 
-    $scope.availLang = function() {
-      return ['us', 'de']
-    };
+                    $scope.availLang = function() {
+                      return ['us', 'de']
+                    };
 
-    $scope.isActive = function(viewLocation) {
-      return viewLocation === $location.path();
-    };
-  });
+                    $scope.isActive = function(viewLocation) {
+                      return viewLocation === $location.path();
+                    };
+
+                    $scope.isLoggedIn = function() {
+                      return !(angular.isUndefined($rootScope.user) || $rootScope.user === null);
+                    };
+                    $scope.user = function() {
+                      return $rootScope.user;
+                    };
+                  });
 
   orchidae.filter('reverse', function() {
     return function(items) {

@@ -6,7 +6,7 @@
   orchidae.controller('PhotostreamController', function($scope, $rootScope,
           $http) {
     $scope.photos = [];
-    $http.get('picture/admin/latest', {
+    $http.get('picture/' + $rootScope.user + '/latest', {
       headers: {
         'Accept': 'application/json'
       }
