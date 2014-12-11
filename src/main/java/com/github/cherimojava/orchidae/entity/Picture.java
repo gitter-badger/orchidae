@@ -67,4 +67,8 @@ public interface Picture extends Entity<Picture> {
 	public int getHeight();
 
 	public Picture setHeight(int height);
+
+	public Access getAccess();
+
+	public Picture setAccess(Access access);
 }

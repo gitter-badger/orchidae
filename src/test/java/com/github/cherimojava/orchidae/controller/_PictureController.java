@@ -19,11 +19,13 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -33,6 +35,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.bson.Document;
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,6 +60,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.cherimojava.data.mongo.entity.EntityFactory;
 import com.github.cherimojava.data.spring.EntityConverter;
 import com.github.cherimojava.orchidae.entity.Picture;
+import com.github.cherimojava.orchidae.entity.User;
 import com.github.cherimojava.orchidae.util.FileUtil;
 import com.mongodb.client.MongoDatabase;
 
@@ -89,6 +93,8 @@ public class _PictureController extends ControllerTestBase {
 
 		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("test", "1");
 		SecurityContextHolder.getContext().setAuthentication(auth);
+
+		factory.create(User.class).setUsername(user).setPassword("1").setMemberSince(DateTime.now()).save();
 
 		session = new MockHttpSession();
 		session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
@@ -193,6 +199,14 @@ public class _PictureController extends ControllerTestBase {
 		mvc.perform(get(url(id))).andExpect(status().isOk());
 		mvc.perform(get(url("../" + id))).andExpect(status().isNotFound());
 		mvc.perform(get(url(id + "g"))).andExpect(status().isNotFound());
+	}
+
+	@Test
+	public void pictureOnlyOfCurrentUser() throws Exception {
+		createPicture("one", "png");
+		getLatest(10).andExpect(jsonPath("$[0].originalName", is("one.png")));
+		user = "nopictures";
+		assertThat(getLatest(10).andReturn().getResponse().getContentAsString(), sameJSONAs("[]"));
 	}
 
 	private ResultActions createPicture(String name, String type) throws Exception {

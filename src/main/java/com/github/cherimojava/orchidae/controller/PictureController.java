@@ -49,12 +49,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.github.cherimojava.data.mongo.entity.EntityFactory;
+import com.github.cherimojava.orchidae.entity.Access;
 import com.github.cherimojava.orchidae.entity.Picture;
 import com.github.cherimojava.orchidae.entity.User;
 import com.github.cherimojava.orchidae.util.FileUtil;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mongodb.client.MongoIterable;
+import com.mongodb.client.QueryBuilder;
 
 /**
  * Does the handling of uploading and serving pictures
@@ -98,7 +100,8 @@ public class PictureController {
 		}
 
 		// TODO only return pictures visible to the current user
-		MongoIterable<Picture> it = factory.getCollection(Picture.class).find(Picture.class).limit(number).sort(
+		MongoIterable<Picture> it = factory.getCollection(Picture.class).find(
+				QueryBuilder.query("user.$id").is(user).toDocument(), Picture.class).limit(number).sort(
 				new Document("uploaded", 1));
 		return Lists.newArrayList(it);
 	}
@@ -183,6 +186,7 @@ public class PictureController {
 				BufferedImage image = ImageIO.read(storedPicture);
 				picture.setHeight(image.getHeight());
 				picture.setWidth(image.getWidth());
+				picture.setAccess(Access.PRIVATE);// TODO for now only private access
 				createThumbnail(picture.getId(), image, type);
 				LOG.info("Uploaded {} and assigned id {}", file.getOriginalFilename(), picture.getId());
 				// TODO can't put everything into one folder
