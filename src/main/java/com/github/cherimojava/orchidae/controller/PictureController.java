@@ -43,6 +43,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -92,46 +93,18 @@ public class PictureController {
 	 * @since 1.0.0
 	 * @see #_getPicturesMeta(String, int)
 	 */
-	@RequestMapping(value = "/{user}/latest/{number:[0-9]+}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<Picture> latestPicturesByUserLimit(@PathVariable("user") String user,
-			@PathVariable("number") Integer number) {
-		return _getPicturesMeta(user, number);
-	}
-
-	/**
-	 * Returns a list (json) with the {@link #latestPictureLimit} most recent photos of the given {user}.
-	 *
-	 * @param user
-	 *            to retrieve pictures from
-	 * @return picture json list with the latest pictures
-	 * @since 1.0.0
-	 * @see #_getPicturesMeta(String, int)
-	 */
 	@RequestMapping(value = "/{user}/latest", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<Picture> latestPicturesByUserDefLimit(@PathVariable("user") String user) {
-		return _getPicturesMeta(user, latestPictureLimit);
-	}
-
-	/**
-	 * actual method handling the providing of meta data. Returned data is constrained in such a way that only pictures
-	 * visible to current user are returned (no private pictures of a different user e.g.)
-	 * 
-	 * @param user
-	 *            user to get pictures from
-	 * @param amount
-	 *            number of pictures to read, limited by {@link #latestPictureLimit}
-	 * @return list of pictures visible to current user
-	 */
-	protected List<Picture> _getPicturesMeta(String user, int amount) {
-		if (amount > latestPictureLimit) {
-			LOG.info("latest picture request was ({}) greater than max allowed {}. Only returning max", amount,
+	public List<Picture> latestPicturesMetaByUserLimit(@PathVariable("user") String user,
+			@RequestParam(value = "n", required = false) Integer number) {
+		if (number == null || number > latestPictureLimit) {
+			LOG.info("latest picture request was ({}) greater than max allowed {}. Only returning max", number,
 					latestPictureLimit);
-			amount = latestPictureLimit;
+			number = latestPictureLimit;
 		}
 
 		// TODO only return pictures visible to the current user
 		MongoIterable<Picture> it = factory.getCollection(Picture.class).find(
-				QueryBuilder.query("user.$id").is(user).toDocument(), Picture.class).limit(amount).sort(
+				QueryBuilder.query("user.$id").is(user).toDocument(), Picture.class).limit(number).sort(
 				new Document("uploaded", 1));
 		return Lists.newArrayList(it);
 	}
@@ -150,30 +123,18 @@ public class PictureController {
 	 * @see {@link #_getPicture(String, String, String)}
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/{user}/{id:[a-f0-9]+}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE, params = { "f=t" })
-	public ResponseEntity<Resource> getPictureThumbnail(@PathVariable("user") String user, @PathVariable("id") String id)
-			throws IOException {
-		return _getPicture(user, id, "_t");
-	}
-
-	/**
-	 * serves the requested picture {id} for the given {user}
-	 *
-	 * @param user
-	 *            user to lookup picture
-	 * @param id
-	 *            id of the picture to load
-	 * @return the picture which belongs to the given id, or {@link org.springframework.http.HttpStatus#NOT_FOUND} if no
-	 *         such picture exists
-	 * @throws IOException
-	 * @since 1.0.0
-	 * @see {@link #_getPicture(String, String, String)}
-	 */
-	@ResponseBody
 	@RequestMapping(value = "/{user}/{id:[a-f0-9]+}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
-	public ResponseEntity<Resource> getPictureOriginal(@PathVariable("user") String user, @PathVariable("id") String id)
-			throws IOException {
-		return _getPicture(user, id, "");
+	public ResponseEntity<Resource> getPicture(@PathVariable("user") String user, @PathVariable("id") String id,
+			@RequestParam(value = "f", required = false) String format) throws IOException {
+		if (format == null) {
+			return _getPicture(user, id, "");
+		} else {
+			if ("t".equals(format)) {
+				return _getPicture(user, id, "_t");
+			} else {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+		}
 	}
 
 	/**
@@ -236,7 +197,6 @@ public class PictureController {
 				picture.setAccess(Access.PRIVATE);// TODO for now only private access
 				createThumbnail(picture.getId(), image, type);
 				LOG.info("Uploaded {} and assigned id {}", file.getOriginalFilename(), picture.getId());
-				// TODO can't put everything into one folder
 				picture.save();
 			} catch (Exception e) {
 				LOG.warn("failed to store picture", e);
