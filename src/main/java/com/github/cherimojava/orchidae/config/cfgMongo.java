@@ -57,6 +57,7 @@ import de.flapdoodle.embed.process.io.IStreamProcessor;
 import de.flapdoodle.embed.process.io.Processors;
 import de.flapdoodle.embed.process.io.directories.FixedPath;
 import de.flapdoodle.embed.process.runtime.Network;
+import de.flapdoodle.embed.process.store.Downloader;
 
 /**
  * MongoDB configuration
@@ -138,7 +139,8 @@ public class cfgMongo {
 		}
 		return new RuntimeConfigBuilder().defaults(Command.MongoD).processOutput(
 				new ProcessOutput(mongodOutput, mongodError, commandsOutput)).artifactStore(
-				new ArtifactStoreBuilder().executableNaming(new UserTempNaming()).tempDir(path).download(
+				new ArtifactStoreBuilder().downloader(new Downloader()).executableNaming(new UserTempNaming()).tempDir(
+						path).download(
 						new DownloadConfigBuilder().defaultsForCommand(Command.MongoD).artifactStorePath(path))).build();
 	}
 

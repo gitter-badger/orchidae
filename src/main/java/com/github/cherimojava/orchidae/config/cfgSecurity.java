@@ -17,7 +17,9 @@ package com.github.cherimojava.orchidae.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
@@ -30,6 +32,7 @@ import com.github.cherimojava.orchidae.security.MongoUserDetailService;
 
 @Configuration
 @EnableWebMvcSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class cfgSecurity extends WebSecurityConfigurerAdapter {
 
 	@Override
@@ -58,4 +61,10 @@ public class cfgSecurity extends WebSecurityConfigurerAdapter {
 	public UserDetailsService userDetailsService() {
 		return new MongoUserDetailService();
 	}
+
+	@Bean
+	public AuthenticationManager authManager() throws Exception {
+		return authenticationManager();
+	}
+
 }

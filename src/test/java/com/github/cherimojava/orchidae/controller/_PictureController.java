@@ -220,8 +220,8 @@ public class _PictureController extends ControllerTestBase {
 	}
 
 	private ResultActions getLatest(int count) throws Exception {
-		return mvc.perform(get(url("latest", "10")).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andExpect(
-				content().contentType(MediaType.APPLICATION_JSON));
+		return mvc.perform(get(url("latest?n=" + count)).contentType(MediaType.APPLICATION_JSON)).andExpect(
+				status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON));
 	}
 
 	public String url(String... parts) {
