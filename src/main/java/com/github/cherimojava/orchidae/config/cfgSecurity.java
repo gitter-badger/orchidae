@@ -29,6 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.github.cherimojava.orchidae.security.MongoAuthenticationProvider;
 import com.github.cherimojava.orchidae.security.MongoUserDetailService;
+import com.github.cherimojava.orchidae.security.authenticator.PictureAccessAuthenticator;
 
 @Configuration
 @EnableWebMvcSecurity
@@ -65,6 +66,11 @@ public class cfgSecurity extends WebSecurityConfigurerAdapter {
 	@Bean
 	public AuthenticationManager authManager() throws Exception {
 		return authenticationManager();
+	}
+
+	@Bean(name = "paa")
+	public PictureAccessAuthenticator pictureAccessValidator() {
+		return new PictureAccessAuthenticator();
 	}
 
 }

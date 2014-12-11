@@ -15,5 +15,18 @@
  */
 package com.github.cherimojava.orchidae;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 public class TestBase {
+
+	protected String ownr = "owner";
+	protected UsernamePasswordAuthenticationToken owner = new UsernamePasswordAuthenticationToken(ownr, "1");
+
+	protected UsernamePasswordAuthenticationToken other = new UsernamePasswordAuthenticationToken("other", "1");
+
+	protected void setAuthentication(Authentication auth) {
+		SecurityContextHolder.getContext().setAuthentication(auth);
+	}
 }

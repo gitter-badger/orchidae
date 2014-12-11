@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -46,7 +47,8 @@ import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.test.web.servlet.MockMvc;
@@ -64,13 +66,14 @@ import com.github.cherimojava.orchidae.entity.User;
 import com.github.cherimojava.orchidae.util.FileUtil;
 import com.mongodb.client.MongoDatabase;
 
+//TODO add test for permissions
 public class _PictureController extends ControllerTestBase {
 	private MockMvc mvc;
 
 	@Autowired
 	private EntityFactory factory;
 
-	private String user = "test";
+	private String user = ownr;
 
 	@Autowired
 	private MongoDatabase db;
@@ -91,10 +94,9 @@ public class _PictureController extends ControllerTestBase {
 		mvc = MockMvcBuilders.standaloneSetup(controller).setMessageConverters(new EntityConverter(factory),
 				new StringHttpMessageConverter(), new ResourceHttpMessageConverter()).build();
 
-		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("test", "1");
-		SecurityContextHolder.getContext().setAuthentication(auth);
+		setAuthentication(owner);
 
-		factory.create(User.class).setUsername(user).setPassword("1").setMemberSince(DateTime.now()).save();
+		factory.create(User.class).setUsername(ownr).setPassword("1").setMemberSince(DateTime.now()).save();
 
 		session = new MockHttpSession();
 		session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
@@ -142,8 +144,8 @@ public class _PictureController extends ControllerTestBase {
 		MvcResult result = getLatest(10).andReturn();
 		List<Picture> pictures = factory.readList(Picture.class, result.getResponse().getContentAsString());
 		assertEquals(pictures.size(), 1);
-		ByteArrayInputStream bais = new ByteArrayInputStream(mvc.perform(get(url(pictures.get(0).getId()))).andExpect(
-				status().isOk()).andReturn().getResponse().getContentAsByteArray());
+		ByteArrayInputStream bais = new ByteArrayInputStream(
+				mvc.perform(get(url(pictures.get(0).getId())).param("f", "o")).andExpect(status().isOk()).andReturn().getResponse().getContentAsByteArray());
 		BufferedImage image = ImageIO.read(bais);
 		assertEquals(42, image.getWidth());
 		assertEquals(42, image.getHeight());
@@ -207,6 +209,16 @@ public class _PictureController extends ControllerTestBase {
 		getLatest(10).andExpect(jsonPath("$[0].originalName", is("one.png")));
 		user = "nopictures";
 		assertThat(getLatest(10).andReturn().getResponse().getContentAsString(), sameJSONAs("[]"));
+	}
+
+	@Test
+	public void testAuthorizationDefined() throws NoSuchMethodException {
+		assertTrue(PictureController.class.getMethod("getPicture", String.class, String.class, String.class).isAnnotationPresent(
+				PreAuthorize.class));
+		assertTrue(PictureController.class.getMethod("latestPicturesMetaByUserLimit", String.class, Integer.class).isAnnotationPresent(
+				PostFilter.class));
+		assertTrue(PictureController.class.getMethod("getPictureMeta", String.class, String.class).isAnnotationPresent(
+				PreAuthorize.class));
 	}
 
 	private ResultActions createPicture(String name, String type) throws Exception {

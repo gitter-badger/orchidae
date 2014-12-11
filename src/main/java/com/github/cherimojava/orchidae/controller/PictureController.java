@@ -39,6 +39,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -91,9 +93,9 @@ public class PictureController {
 	 *            number of pictures to ask for. Number is constrained by {@link #latestPictureLimit}
 	 * @return picture json list with the latest pictures
 	 * @since 1.0.0
-	 * @see #_getPicturesMeta(String, int)
 	 */
 	@RequestMapping(value = "/{user}/latest", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostFilter("@paa.hasAccess(filterObject.id)")
 	public List<Picture> latestPicturesMetaByUserLimit(@PathVariable("user") String user,
 			@RequestParam(value = "n", required = false) Integer number) {
 		if (number == null || number > latestPictureLimit) {
@@ -102,7 +104,6 @@ public class PictureController {
 			number = latestPictureLimit;
 		}
 
-		// TODO only return pictures visible to the current user
 		MongoIterable<Picture> it = factory.getCollection(Picture.class).find(
 				QueryBuilder.query("user.$id").is(user).toDocument(), Picture.class).limit(number).sort(
 				new Document("uploaded", 1));
@@ -120,34 +121,45 @@ public class PictureController {
 	 *         such picture exists
 	 * @throws IOException
 	 * @since 1.0.0
-	 * @see {@link #_getPicture(String, String, String)}
+	 * @see {@link #_getPicture(String, String)}
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/{user}/{id:[a-f0-9]+}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
+	@RequestMapping(value = "/{user}/{id:[a-f0-9]+}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE, params = "f")
+	@PreAuthorize("@paa.hasAccess(#id)")
 	public ResponseEntity<Resource> getPicture(@PathVariable("user") String user, @PathVariable("id") String id,
-			@RequestParam(value = "f", required = false) String format) throws IOException {
-		if (format == null) {
-			return _getPicture(user, id, "");
-		} else {
-			if ("t".equals(format)) {
-				return _getPicture(user, id, "_t");
-			} else {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			}
+			@RequestParam(value = "f") String format) throws IOException {
+		ResponseEntity resp;
+		switch (format) {
+		case "t":// Thumbnail
+			return _getPicture(id, "_t");
+		case "o":// Original
+			return _getPicture(id, "");
+		default:// All unknown garbage
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/{user}/{id:[a-f0-9]+}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, params = "!f")
+	@PreAuthorize("@paa.hasAccess(#id)")
+	public ResponseEntity<Picture> getPictureMeta(@PathVariable("user") String user, @PathVariable("id") String id) {
+		Picture pic = factory.load(Picture.class, id);
+		return (pic != null) ? new ResponseEntity<>(pic, HttpStatus.OK) : new ResponseEntity<Picture>(
+				HttpStatus.NOT_FOUND);
 	}
 
 	/**
 	 * actual method retrieving the picture from disk. Requested picture is only returned if the current user is allowed
 	 * to view it
 	 * 
-	 * @param user
 	 * @param id
+	 *            identification of picture
 	 * @param type
-	 * @return
+	 *            type of the picture eg _t for thumbnail etc.
+	 * @return ResponseEntity containing the resource to the picture or NOT_FOUND
 	 * @throws IOException
 	 */
-	protected ResponseEntity<Resource> _getPicture(String user, String id, String type) throws IOException {
+	private ResponseEntity<Resource> _getPicture(String id, String type) throws IOException {
 		File picture = fileUtil.getFileHandle(id + type);
 		if (picture.exists()) {
 			return new ResponseEntity<Resource>(new InputStreamResource(FileUtils.openInputStream(picture)),
