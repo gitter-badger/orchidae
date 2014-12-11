@@ -12,7 +12,10 @@
         method: 'POST',
         url: './' + form + '.form',
         transformRequest: transformRequestAsFormPost,
-        data: $scope.data
+        data: $scope.data,
+        headers: {//With this trick we get the csrf up and running again
+          'X-CSRF-TOKEN': document.getElementById("_csrf").value
+        }
       }).success(function(data, status, headers, config) {
         $location.path('');
       }).error(function(data, status, headers, config) {
@@ -29,7 +32,10 @@
         method: 'POST',
         url: './login.form',
         transformRequest: transformRequestAsFormPost,
-        data: $scope.data
+        data: $scope.data,
+        headers: {
+          'X-CSRF-TOKEN': document.getElementById("_csrf").value
+        }
       }).success(function(data, status, headers, config) {
         $location.path('');
         $rootScope.user = $scope.data.username;
