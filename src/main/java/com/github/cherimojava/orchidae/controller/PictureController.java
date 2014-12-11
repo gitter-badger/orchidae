@@ -90,31 +90,54 @@ public class PictureController {
 	 *            number of pictures to ask for. Number is constrained by {@link #latestPictureLimit}
 	 * @return picture json list with the latest pictures
 	 * @since 1.0.0
+	 * @see #_getPicturesMeta(String, int)
 	 */
 	@RequestMapping(value = "/{user}/latest/{number:[0-9]+}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<Picture> picturesOption(@PathVariable("user") String user, @PathVariable("number") Integer number) {
-		if (number > latestPictureLimit) {
-			LOG.info("latest picture request was ({}) greater than max allowed {}. Only returning max", number,
+	public List<Picture> latestPicturesByUserLimit(@PathVariable("user") String user,
+			@PathVariable("number") Integer number) {
+		return _getPicturesMeta(user, number);
+	}
+
+	/**
+	 * Returns a list (json) with the {@link #latestPictureLimit} most recent photos of the given {user}.
+	 *
+	 * @param user
+	 *            to retrieve pictures from
+	 * @return picture json list with the latest pictures
+	 * @since 1.0.0
+	 * @see #_getPicturesMeta(String, int)
+	 */
+	@RequestMapping(value = "/{user}/latest", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Picture> latestPicturesByUserDefLimit(@PathVariable("user") String user) {
+		return _getPicturesMeta(user, latestPictureLimit);
+	}
+
+	/**
+	 * actual method handling the providing of meta data. Returned data is constrained in such a way that only pictures
+	 * visible to current user are returned (no private pictures of a different user e.g.)
+	 * 
+	 * @param user
+	 *            user to get pictures from
+	 * @param amount
+	 *            number of pictures to read, limited by {@link #latestPictureLimit}
+	 * @return list of pictures visible to current user
+	 */
+	protected List<Picture> _getPicturesMeta(String user, int amount) {
+		if (amount > latestPictureLimit) {
+			LOG.info("latest picture request was ({}) greater than max allowed {}. Only returning max", amount,
 					latestPictureLimit);
-			number = latestPictureLimit;
+			amount = latestPictureLimit;
 		}
 
 		// TODO only return pictures visible to the current user
 		MongoIterable<Picture> it = factory.getCollection(Picture.class).find(
-				QueryBuilder.query("user.$id").is(user).toDocument(), Picture.class).limit(number).sort(
+				QueryBuilder.query("user.$id").is(user).toDocument(), Picture.class).limit(amount).sort(
 				new Document("uploaded", 1));
 		return Lists.newArrayList(it);
 	}
 
-	@RequestMapping(value = "/{user}/latest", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<Picture> pictures(@PathVariable("user") String user) {
-		return picturesOption(user, latestPictureLimit);
-	}
-
-	// TODO check that only pictures visible to user are handed out
-
 	/**
-	 * serves the requested picture {id} for the given {user}
+	 * serves the requested picture thumbnail {id} for the given {user}
 	 * 
 	 * @param user
 	 *            user to lookup picture
@@ -124,6 +147,7 @@ public class PictureController {
 	 *         such picture exists
 	 * @throws IOException
 	 * @since 1.0.0
+	 * @see {@link #_getPicture(String, String, String)}
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/{user}/{id:[a-f0-9]+}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE, params = { "f=t" })
@@ -132,6 +156,19 @@ public class PictureController {
 		return _getPicture(user, id, "_t");
 	}
 
+	/**
+	 * serves the requested picture {id} for the given {user}
+	 *
+	 * @param user
+	 *            user to lookup picture
+	 * @param id
+	 *            id of the picture to load
+	 * @return the picture which belongs to the given id, or {@link org.springframework.http.HttpStatus#NOT_FOUND} if no
+	 *         such picture exists
+	 * @throws IOException
+	 * @since 1.0.0
+	 * @see {@link #_getPicture(String, String, String)}
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/{user}/{id:[a-f0-9]+}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
 	public ResponseEntity<Resource> getPictureOriginal(@PathVariable("user") String user, @PathVariable("id") String id)
@@ -139,6 +176,16 @@ public class PictureController {
 		return _getPicture(user, id, "");
 	}
 
+	/**
+	 * actual method retrieving the picture from disk. Requested picture is only returned if the current user is allowed
+	 * to view it
+	 * 
+	 * @param user
+	 * @param id
+	 * @param type
+	 * @return
+	 * @throws IOException
+	 */
 	protected ResponseEntity<Resource> _getPicture(String user, String id, String type) throws IOException {
 		File picture = fileUtil.getFileHandle(id + type);
 		if (picture.exists()) {
