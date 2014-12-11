@@ -6,7 +6,7 @@
         <div><label>
             <msg key="login.password"/>
             : <input type="password" data-ng-model="data.password"/> </label></div>
-        <div><input type="button" data-ng-click="login()" value="{{'login.submit'|i18n}}"/>
+        <div><input type="button" data-ng-click="submit('login', setUserCallback)" value="{{'login.submit'|i18n}}"/>
         </div>
         <input type="hidden" id="${_csrf.parameterName}" value="${_csrf.token}"/>
     </form>

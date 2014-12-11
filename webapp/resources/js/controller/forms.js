@@ -7,7 +7,9 @@
           $location, transformRequestAsFormPost) {
     $scope.messages = [];
     $scope.data = {};
-    $scope.submit = function(form) {
+    $scope.submit = function(form, success) {
+      var callback = (angular.isUndefined(success) || success === null)
+              ? $scope.defaultCallback : success;
       $http({
         method: 'POST',
         url: './' + form + '.form',
@@ -16,9 +18,7 @@
         headers: {//With this trick we get the csrf up and running again
           'X-CSRF-TOKEN': document.getElementById("_csrf").value
         }
-      }).success(function(data, status, headers, config) {
-        $location.path('');
-      }).error(function(data, status, headers, config) {
+      }).success(callback).error(function(data, status, headers, config) {
         if (status == 400) {
           $scope.messages = data;
         } else {
@@ -26,26 +26,14 @@
         }
       });
     };
-    //TODO would be cool if only custom callback could be provided
-    $scope.login = function() {
-      $http({
-        method: 'POST',
-        url: './login.form',
-        transformRequest: transformRequestAsFormPost,
-        data: $scope.data,
-        headers: {
-          'X-CSRF-TOKEN': document.getElementById("_csrf").value
-        }
-      }).success(function(data, status, headers, config) {
-        $location.path('');
-        $rootScope.user = $scope.data.username;
-      }).error(function(data, status, headers, config) {
-        if (status == 400) {
-          $scope.messages = data;
-        } else {
-          alert('Unexpected server error.');
-        }
-      });
-    };
+
+    $scope.setUserCallback = function(data, status, headers, config) {
+      $scope.defaultCallback();
+      $rootScope.user = $scope.data.username;
+    }
+
+    $scope.defaultCallback = function(data, status, headers, config) {
+      $location.path('');
+    }
   });
 }());
