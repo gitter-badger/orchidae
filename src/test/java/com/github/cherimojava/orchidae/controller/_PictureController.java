@@ -152,7 +152,7 @@ public class _PictureController extends ControllerTestBase {
 	}
 
 	@Test
-	public void getThumbnail() throws Exception {
+	public void getSmall() throws Exception {
 		controller.maxHeight = 10;
 		// verify no picture there
 		mvc.perform(get(url("acd3131"))).andExpect(status().isNotFound());
@@ -163,7 +163,7 @@ public class _PictureController extends ControllerTestBase {
 		List<Picture> pictures = factory.readList(Picture.class, result.getResponse().getContentAsString());
 		assertEquals(pictures.size(), 1);
 		ByteArrayInputStream bais = new ByteArrayInputStream(
-				mvc.perform(get(url(pictures.get(0).getId() + "?f=t"))).andExpect(status().isOk()).andReturn().getResponse().getContentAsByteArray());
+				mvc.perform(get(url(pictures.get(0).getId())).param("f", "s")).andExpect(status().isOk()).andReturn().getResponse().getContentAsByteArray());
 		BufferedImage image = ImageIO.read(bais);
 		assertEquals(10, image.getWidth());
 		assertEquals(10, image.getHeight());

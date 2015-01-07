@@ -73,7 +73,7 @@ public class PictureController {
 	@Value("${limit.latestPictures:30}")
 	int latestPictureLimit;
 
-	@Value("${picture.thumbnail.maxHeight:150}")
+	@Value("${picture.small.maxHeight:300}")
 	int maxHeight;
 
 	@Autowired
@@ -130,8 +130,8 @@ public class PictureController {
 			@RequestParam(value = "f") String format) throws IOException {
 		ResponseEntity resp;
 		switch (format) {
-		case "t":// Thumbnail
-			return _getPicture(id, "_t");
+		case "s":// small image
+			return _getPicture(id, "_s");
 		case "o":// Original
 			return _getPicture(id, "");
 		default:// All unknown garbage
@@ -207,7 +207,7 @@ public class PictureController {
 				picture.setHeight(image.getHeight());
 				picture.setWidth(image.getWidth());
 				picture.setAccess(Access.PRIVATE);// TODO for now only private access
-				createThumbnail(picture.getId(), image, type);
+				createSmall(picture.getId(), image, type);
 				LOG.info("Uploaded {} and assigned id {}", file.getOriginalFilename(), picture.getId());
 				picture.save();
 			} catch (Exception e) {
@@ -230,14 +230,14 @@ public class PictureController {
 	 * @param image
 	 * @param type
 	 */
-	private void createThumbnail(String id, BufferedImage image, String type) {
+	private void createSmall(String id, BufferedImage image, String type) {
 		int height = image.getHeight();
 		int width = image.getWidth();
 		double scale = maxHeight / (double) height;
 		BufferedImage thumbnail = Scalr.resize(image, Scalr.Method.ULTRA_QUALITY,
 				((Double) (width * scale)).intValue(), ((Double) (height * scale)).intValue(), Scalr.OP_ANTIALIAS);
 		try {
-			ImageIO.write(thumbnail, type, fileUtil.getFileHandle(id + "_t"));
+			ImageIO.write(thumbnail, type, fileUtil.getFileHandle(id + "_s"));
 		} catch (IOException e) {
 			LOG.error("failed to create thumbnail for picture", e);
 		}
