@@ -105,7 +105,7 @@ public class PictureController {
 		}
 
 		MongoIterable<Picture> it = factory.getCollection(Picture.class).find(
-				QueryBuilder.query("user.$id").is(user).toDocument(), Picture.class).limit(number).sort(
+				QueryBuilder.query("user").is(user).toDocument(), Picture.class).limit(number).sort(
 				new Document("uploaded", 1));
 		return Lists.newArrayList(it);
 	}

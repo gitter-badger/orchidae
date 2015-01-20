@@ -182,7 +182,7 @@
         <!-- mongodb driver -->
         <dependency>
             <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver-core</artifactId>
+            <artifactId>mongodb-driver-core</artifactId>
             <version>${mongodb.version}</version>
         </dependency>
         <dependency>
