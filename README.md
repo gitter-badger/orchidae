@@ -21,4 +21,4 @@ grunt
 
 Powered with
 ====
-Angular.js, headroom.js, MongoDB, Spring
+Angular.js, MongoDB, Spring
