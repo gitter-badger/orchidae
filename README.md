@@ -1,4 +1,4 @@
-orchidae
+orchidae [![Build Status](https://travis-ci.org/cherimojava/orchidae.svg?branch=master)](https://travis-ci.org/cherimojava/orchidae) [![Coverage Status](https://coveralls.io/repos/cherimojava/orchidae/badge.svg?branch=master)](https://coveralls.io/r/cherimojava/orchidae?branch=master)
 ========
 
 Usage
