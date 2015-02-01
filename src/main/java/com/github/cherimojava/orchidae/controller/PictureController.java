@@ -193,7 +193,7 @@ public class PictureController {
 			picture.setTitle(StringUtils.split(file.getOriginalFilename(), ".")[0]);
 			picture.setId(generateId());
 			picture.setOriginalName(file.getOriginalFilename());
-			picture.setUploaded(DateTime.now());
+			picture.setUploadDate(DateTime.now());
 
 			String type = StringUtils.substringAfterLast(file.getOriginalFilename(), ".");
 

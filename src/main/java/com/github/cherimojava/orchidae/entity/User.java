@@ -28,25 +28,50 @@ import com.github.cherimojava.data.mongo.entity.annotation.Id;
  */
 public interface User extends Entity<User> {
 
+	/**
+	 * username
+	 * 
+	 * @return
+	 */
 	@Id
 	@NotNull
 	public String getUsername();
 
 	public User setUsername(String username);
 
+	/**
+	 * first name of the user
+	 * 
+	 * @return
+	 */
 	public String getFirstName();
 
 	public User setFirstName(String firstname);
 
+	/**
+	 * last name of the user
+	 * 
+	 * @return
+	 */
 	public String getLastName();
 
 	public User setLastName(String lastName);
 
+	/**
+	 * users encrypted password
+	 * 
+	 * @return
+	 */
 	@NotNull
 	public String getPassword();
 
 	public User setPassword(String password);
 
+	/**
+	 * date the user registered
+	 * 
+	 * @return
+	 */
 	@Final
 	@NotNull
 	public DateTime getMemberSince();

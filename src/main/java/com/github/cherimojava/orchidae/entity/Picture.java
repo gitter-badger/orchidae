@@ -45,29 +45,59 @@ public interface Picture extends Entity<Picture> {
 
 	public Picture setUser(User user);
 
+	/**
+	 * title of the picture
+	 * 
+	 * @return
+	 */
 	public String getTitle();
 
 	public Picture setTitle(String title);
 
+	/**
+	 * original upload filename of the picture
+	 * 
+	 * @return
+	 */
 	@Final
 	public String getOriginalName();
 
 	public Picture setOriginalName(String name);
 
-	public DateTime getUploaded();
+	/**
+	 * date the picture was uploaded
+	 * 
+	 * @return
+	 */
+	public DateTime getUploadDate();
 
-	public Picture setUploaded(DateTime uploadTime);
+	public Picture setUploadDate(DateTime uploadTime);
 
+	/**
+	 * original width of the picture
+	 * 
+	 * @return
+	 */
 	@Final
 	public int getWidth();
 
 	public Picture setWidth(int width);
 
+	/**
+	 * original height of the picture
+	 * 
+	 * @return
+	 */
 	@Final
 	public int getHeight();
 
 	public Picture setHeight(int height);
 
+	/**
+	 * access permissions of the picture (private, public etc.)
+	 * 
+	 * @return
+	 */
 	public Access getAccess();
 
 	public Picture setAccess(Access access);
