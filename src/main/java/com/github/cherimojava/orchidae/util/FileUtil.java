@@ -59,7 +59,22 @@ public class FileUtil {
 		return new File(files.getUnchecked(substring), StringUtils.substring(id, subfolders * foldernameSize));
 	}
 
+	/**
+	 * generates a hex id of the length 16
+	 * 
+	 * @return
+	 */
 	public static String generateId() {
 		return RandomStringUtils.random(16, hex);
+	}
+
+	/**
+	 * checks if the given id is 16 chars long and is based upon hex chars
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public static boolean validateId(String id) {
+		return id != null && id.length() == 16 && StringUtils.containsOnly(id, hex);
 	}
 }

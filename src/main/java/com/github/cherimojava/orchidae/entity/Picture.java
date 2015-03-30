@@ -101,4 +101,14 @@ public interface Picture extends Entity<Picture> {
 	public Access getAccess();
 
 	public Picture setAccess(Access access);
+
+	/**
+	 * the batch this picture was uploaded within
+	 * 
+	 * @return
+	 */
+	@Reference
+	public BatchUpload getBatchUpload();
+
+	public Picture setBatchUpload(BatchUpload batch);
 }

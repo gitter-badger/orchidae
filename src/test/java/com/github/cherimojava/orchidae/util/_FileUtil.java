@@ -45,4 +45,13 @@ public class _FileUtil extends TestBase {
 		assertTrue(f.getParentFile().exists());
 		assertFalse(f.exists());
 	}
+
+	@Test
+	public void checkValidIdValidation() {
+		assertTrue(FileUtil.validateId("0123456789abcdef"));
+		assertFalse(FileUtil.validateId("-z"));
+		assertFalse(FileUtil.validateId("x"));
+		assertFalse(FileUtil.validateId("0123456"));
+		assertFalse(FileUtil.validateId("0000000000000000000"));
+	}
 }

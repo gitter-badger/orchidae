@@ -36,7 +36,7 @@ public class MongoAuthenticationProvider implements AuthenticationProvider {
 
 	private static final String ERROR_MSG = "Incorrect password and/or username";
 
-	private static Logger LOG = LogManager.getLogger();
+	private static final Logger LOG = LogManager.getLogger();
 
 	@Autowired
 	private PasswordEncoder pwEncoder;

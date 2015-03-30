@@ -6,9 +6,9 @@
   });
 
 
-
 </script>
 <form id="picture-dropzone" enctype="multipart/form-data" action="/picture" class="dropzone">
     <div id="previews" class="dropzone-previews"></div>
     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    <input type="hidden" name="batch" value="$batch"/>
 </form>

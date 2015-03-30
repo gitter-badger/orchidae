@@ -53,6 +53,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.github.cherimojava.data.mongo.entity.EntityFactory;
 import com.github.cherimojava.orchidae.entity.Access;
+import com.github.cherimojava.orchidae.entity.BatchUpload;
 import com.github.cherimojava.orchidae.entity.Picture;
 import com.github.cherimojava.orchidae.entity.User;
 import com.github.cherimojava.orchidae.util.FileUtil;
@@ -82,11 +83,16 @@ public class PictureController {
 	@Autowired
 	FileUtil fileUtil;
 
-	private Logger LOG = LogManager.getLogger();
+	/**
+	 * identifier on clientside for batch
+	 */
+	protected static final String BATCH_IDENTIFIER = "batch";
+
+	private static final Logger LOG = LogManager.getLogger();
 
 	/**
 	 * Returns a list (json) with the {number} most recent photos of the given {user}.
-	 * 
+	 *
 	 * @param user
 	 *            to retrieve pictures from
 	 * @param number
@@ -209,6 +215,7 @@ public class PictureController {
 				picture.setAccess(Access.PRIVATE);// TODO for now only private access
 				createSmall(picture.getId(), image, type);
 				LOG.info("Uploaded {} and assigned id {}", file.getOriginalFilename(), picture.getId());
+				checkBatch(picture, request);
 				picture.save();
 			} catch (Exception e) {
 				LOG.warn("failed to store picture", e);
@@ -220,6 +227,31 @@ public class PictureController {
 		} else {
 			return new ResponseEntity<>("Could not upload all files. Failed to upload: "
 					+ Joiner.on(",").join(badFiles), HttpStatus.OK);
+		}
+	}
+
+	/**
+	 * check if batching should applied to the current picture upload
+	 * 
+	 * @param pic
+	 * @param request
+	 */
+	private void checkBatch(Picture pic, MultipartHttpServletRequest request) {
+		if (StringUtils.isNotEmpty(request.getParameter(BATCH_IDENTIFIER))) {
+			String batchId = request.getParameter(BATCH_IDENTIFIER);
+			if (!FileUtil.validateId(batchId)) {
+				// ignore the batching if the id isn't valid
+				return;
+			}
+			BatchUpload batch = factory.load(BatchUpload.class, batchId);
+			// if the batch doesn't exist, create it
+			if (batch == null) {
+				batch = factory.create(BatchUpload.class);
+				batch.setUploadDate(DateTime.now()).setId(batchId);
+			}
+			batch.addPictures(pic);
+			pic.setBatchUpload(batch);
+			batch.save();
 		}
 	}
 

@@ -60,7 +60,9 @@ import org.springframework.util.StreamUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.cherimojava.data.mongo.entity.EntityFactory;
+import com.github.cherimojava.data.mongo.entity.EntityUtils;
 import com.github.cherimojava.data.spring.EntityConverter;
+import com.github.cherimojava.orchidae.entity.BatchUpload;
 import com.github.cherimojava.orchidae.entity.Picture;
 import com.github.cherimojava.orchidae.entity.User;
 import com.github.cherimojava.orchidae.util.FileUtil;
@@ -90,6 +92,7 @@ public class _PictureController extends ControllerTestBase {
 		controller = new PictureController();
 		controller.factory = factory;
 		controller.fileUtil = fileUtil;
+		controller.latestPictureLimit = 10;
 
 		mvc = MockMvcBuilders.standaloneSetup(controller).setMessageConverters(new EntityConverter(factory),
 				new StringHttpMessageConverter(), new ResourceHttpMessageConverter()).build();
@@ -105,7 +108,9 @@ public class _PictureController extends ControllerTestBase {
 
 	@After
 	public void cleanUp() {
-		db.getCollection("pictures").deleteMany(new Document());
+		db.getCollection(EntityUtils.getCollectionName(Picture.class)).deleteMany(new Document());
+		db.getCollection(EntityUtils.getCollectionName(BatchUpload.class)).deleteMany(new Document());
+		db.getCollection(EntityUtils.getCollectionName(User.class)).deleteMany(new Document());
 	}
 
 	@Test
@@ -219,6 +224,30 @@ public class _PictureController extends ControllerTestBase {
 				PostFilter.class));
 		assertTrue(PictureController.class.getMethod("getPictureMeta", String.class, String.class).isAnnotationPresent(
 				PreAuthorize.class));
+	}
+
+	@Test
+	public void batchingWorking() throws Exception {
+		String batchId = "0123456789abcdef";
+		try (InputStream s = new ClassPathResource("gradient.png").getInputStream();) {
+
+			byte[] bytes = StreamUtils.copyToByteArray(s);
+			MockMultipartFile file = new MockMultipartFile("b", "b.png", "image/png", bytes);
+			mvc.perform(
+					fileUpload("/picture").file(file).accept(MediaType.APPLICATION_JSON).session(session).param(
+							PictureController.BATCH_IDENTIFIER, batchId)).andExpect(status().isCreated()).andExpect(
+					content().contentType(MediaType.APPLICATION_JSON));
+
+			file = new MockMultipartFile("c", "c.png", "image/png", bytes);
+			mvc.perform(
+					fileUpload("/picture").file(file).accept(MediaType.APPLICATION_JSON).session(session).param(
+							PictureController.BATCH_IDENTIFIER, batchId)).andExpect(status().isCreated()).andExpect(
+					content().contentType(MediaType.APPLICATION_JSON));
+		}
+		getLatest(10).andExpect(jsonPath("$[0].title", is("b"))).andExpect(jsonPath("$[0].batchUpload", is(batchId))).andExpect(
+				jsonPath("$[0].originalName", is("b.png"))).andExpect(jsonPath("$[1].title", is("c"))).andExpect(
+				jsonPath("$[1].batchUpload", is(batchId))).andExpect(jsonPath("$[1].originalName", is("c.png")));
+		assertEquals(2,factory.load(BatchUpload.class,batchId).getPictures().size());
 	}
 
 	private ResultActions createPicture(String name, String type) throws Exception {

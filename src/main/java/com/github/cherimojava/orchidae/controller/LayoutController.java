@@ -19,6 +19,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -47,7 +48,7 @@ import com.google.common.collect.ImmutableList;
 @Controller
 public class LayoutController {
 
-	private static Logger LOG = LogManager.getLogger();
+	private static final Logger LOG = LogManager.getLogger();
 
 	@Autowired
 	PasswordEncoder pwEncoder;
@@ -55,7 +56,8 @@ public class LayoutController {
 	@Autowired
 	private EntityFactory factory;
 
-	private static final List<String> formPages = ImmutableList.of("register", "login", "upload");
+	private static final String UPLOAD_PAGE = "upload";
+	private static final List<String> formPages = ImmutableList.of("register", "login", UPLOAD_PAGE);
 
 	/**
 	 * Serves page layouts. Anything which ends with html is supposed to be a layout and will be handled through this
@@ -67,6 +69,10 @@ public class LayoutController {
 		if (formPages.contains(page)) {
 			// For form pages we have to add the csrf token
 			map.addAttribute("_csrf", request.getAttribute(CsrfToken.class.getName()));
+		}
+		if (UPLOAD_PAGE.equals(page)) {
+			// provide some batch uuid, which will later be used to group all those pictures uploaded in a batch
+			map.addAttribute("batch", UUID.randomUUID().toString());
 		}
 		return "layout/" + page;
 	}
