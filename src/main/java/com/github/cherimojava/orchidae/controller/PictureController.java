@@ -25,10 +25,13 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import com.mongodb.QueryBuilder;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.BsonDocument;
+import org.bson.BsonString;
 import org.bson.Document;
 import org.imgscalr.Scalr;
 import org.joda.time.DateTime;
@@ -60,7 +63,6 @@ import com.github.cherimojava.orchidae.util.FileUtil;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mongodb.client.MongoIterable;
-import com.mongodb.client.QueryBuilder;
 
 /**
  * Does the handling of uploading and serving pictures
@@ -111,7 +113,7 @@ public class PictureController {
 		}
 
 		MongoIterable<Picture> it = factory.getCollection(Picture.class).find(
-				QueryBuilder.query("user").is(user).toDocument(), Picture.class).limit(number).sort(
+				new BsonDocument("user",new BsonString( user)), Picture.class).limit(number).sort(
 				new Document("uploaded", 1));
 		return Lists.newArrayList(it);
 	}

@@ -17,7 +17,7 @@
     <properties>
         <java.version>1.7</java.version>
         <cherimojava.version>1.0.0-SNAPSHOT</cherimojava.version>
-        <mongodb.version>3.0.0-cj</mongodb.version>
+        <mongodb.version>3.0.0</mongodb.version>
         <log4j2.version>2.1</log4j2.version>
         <jetty.version>9.2.5.v20141112</jetty.version>
         <jetty.jsp.version>9.2.5.v20141112</jetty.jsp.version>
