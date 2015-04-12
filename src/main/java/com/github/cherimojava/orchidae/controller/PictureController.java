@@ -25,7 +25,6 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import com.mongodb.QueryBuilder;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -113,7 +112,7 @@ public class PictureController {
 		}
 
 		MongoIterable<Picture> it = factory.getCollection(Picture.class).find(
-				new BsonDocument("user",new BsonString( user)), Picture.class).limit(number).sort(
+				new BsonDocument("user", new BsonString(user)), Picture.class).limit(number).sort(
 				new Document("uploadDate", 1));
 		return Lists.newArrayList(it);
 	}
@@ -192,11 +191,11 @@ public class PictureController {
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<String> handleFileUpload(MultipartHttpServletRequest request) {
 		List<String> badFiles = Lists.newArrayList();
+		User user = factory.load(User.class, SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 		for (Iterator<String> it = request.getFileNames(); it.hasNext();) {
 			MultipartFile file = request.getFile(it.next());
 			// Create uuid and Picture entity
 			Picture picture = factory.create(Picture.class);
-			User user = factory.load(User.class, SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 			picture.setUser(user);
 			picture.setTitle(StringUtils.split(file.getOriginalFilename(), ".")[0]);
 			picture.setId(generateId());
