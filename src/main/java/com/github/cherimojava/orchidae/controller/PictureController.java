@@ -114,7 +114,7 @@ public class PictureController {
 
 		MongoIterable<Picture> it = factory.getCollection(Picture.class).find(
 				new BsonDocument("user",new BsonString( user)), Picture.class).limit(number).sort(
-				new Document("uploaded", 1));
+				new Document("uploadDate", 1));
 		return Lists.newArrayList(it);
 	}
 
