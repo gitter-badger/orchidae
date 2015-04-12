@@ -17,6 +17,7 @@ package com.github.cherimojava.orchidae.config;
 
 import static com.github.cherimojava.orchidae.config.RootConfig.PROFILE_TESTING;
 
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -36,5 +37,10 @@ public class cfgTest {
 	@Bean(name = "dbName")
 	public String mongoDBName() {
 		return mongoDBName;
+	}
+
+	@Bean
+	public PropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {
+		return new PropertyPlaceholderConfigurer();
 	}
 }

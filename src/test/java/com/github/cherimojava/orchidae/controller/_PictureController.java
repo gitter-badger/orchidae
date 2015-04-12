@@ -35,6 +35,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import com.github.cherimojava.orchidae.util.UserUtil;
 import org.bson.Document;
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -83,6 +84,9 @@ public class _PictureController extends ControllerTestBase {
 	@Autowired
 	FileUtil fileUtil;
 
+	@Autowired
+	UserUtil userUtil;
+
 	private MockHttpSession session;
 
 	PictureController controller;
@@ -90,6 +94,7 @@ public class _PictureController extends ControllerTestBase {
 	@Before
 	public void setup() {
 		controller = new PictureController();
+		controller.userUtil = userUtil;
 		controller.factory = factory;
 		controller.fileUtil = fileUtil;
 		controller.latestPictureLimit = 10;

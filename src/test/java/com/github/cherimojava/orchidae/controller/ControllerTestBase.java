@@ -18,21 +18,15 @@ package com.github.cherimojava.orchidae.controller;
 import static org.junit.Assert.assertThat;
 
 import org.hamcrest.Matcher;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.github.cherimojava.orchidae.TestBase;
-import com.github.cherimojava.orchidae.config.RootConfig;
 import com.github.cherimojava.orchidae.config.WebMvcConfig;
 import com.github.cherimojava.orchidae.config.cfgMongo;
 import com.google.common.base.Joiner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { cfgMongo.class, WebMvcConfig.class })
-@ActiveProfiles(RootConfig.PROFILE_TESTING)
 @WebAppConfiguration
 public class ControllerTestBase extends TestBase {
 

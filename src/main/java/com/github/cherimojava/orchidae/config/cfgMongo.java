@@ -33,6 +33,7 @@ import org.springframework.context.annotation.Import;
 
 import com.github.cherimojava.data.mongo.entity.EntityFactory;
 import com.github.cherimojava.orchidae.util.FileUtil;
+import com.github.cherimojava.orchidae.util.UserUtil;
 import com.google.common.base.Throwables;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
@@ -98,6 +99,17 @@ public class cfgMongo {
 	@Bean
 	public EntityFactory entityFactory() throws UnknownHostException {
 		return new EntityFactory(mongoDatabase());
+	}
+
+	@Value("${cache.user.size:20}")
+	int userCacheSize;
+
+	@Value("${concurrencyLevel:1}")
+	int concurrencyLevel;
+
+	@Bean
+	public UserUtil userUtil() {
+		return new UserUtil(userCacheSize, concurrencyLevel);
 	}
 
 	@Bean

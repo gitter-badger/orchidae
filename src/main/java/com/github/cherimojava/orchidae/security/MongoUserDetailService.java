@@ -24,6 +24,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.github.cherimojava.data.mongo.entity.EntityFactory;
 import com.github.cherimojava.orchidae.entity.User;
+import com.github.cherimojava.orchidae.util.UserUtil;
 
 /**
  * loads User detail information/basic user information and the users permissions
@@ -31,6 +32,9 @@ import com.github.cherimojava.orchidae.entity.User;
 public class MongoUserDetailService implements UserDetailsService {
 	@Autowired
 	private EntityFactory factory;
+
+	@Autowired
+	private UserUtil userUtil;
 
 	/**
 	 * retrieves the user information or null if no such user is found
@@ -41,7 +45,7 @@ public class MongoUserDetailService implements UserDetailsService {
 	 */
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = factory.load(User.class, username);
+		User user = userUtil.getUser(username);
 		if (user == null) {
 			return null;
 		}
