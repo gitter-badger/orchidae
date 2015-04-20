@@ -39,7 +39,7 @@ public interface Picture extends Entity<Picture> {
 
 	// TODO final should work here too?
 	// @Final
-	@NotNull
+	@NotNull(groups= Entity.Special.class)
 	@Reference
 	public User getUser();
 

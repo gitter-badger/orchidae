@@ -36,7 +36,7 @@ public interface User extends Entity<User> {
 	 * @return
 	 */
 	@Id
-	@NotNull
+	@NotNull(groups= Entity.Special.class)
 	public String getUsername();
 
 	public User setUsername(String username);
@@ -64,7 +64,7 @@ public interface User extends Entity<User> {
 	 * 
 	 * @return
 	 */
-	@NotNull
+	@NotNull(groups= Entity.Special.class)
 	public String getPassword();
 
 	public User setPassword(String password);
@@ -75,11 +75,12 @@ public interface User extends Entity<User> {
 	 * @return
 	 */
 	@Final
-	@NotNull
+	@NotNull(groups= Entity.Special.class)
 	public DateTime getMemberSince();
 
 	public User setMemberSince(DateTime registered);
 
+	@NotNull(groups= Entity.Special.class)
 	public AtomicInteger getPictureCount();
 
 	/**

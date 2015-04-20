@@ -20,6 +20,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -106,6 +107,7 @@ public class LayoutController {
 			newUser.setMemberSince(DateTime.now());
 			newUser.setUsername(request.getParameter("username"));
 			newUser.setPassword(pwEncoder.encode(pwd));
+			newUser.setPictureCount(new AtomicInteger(0));
 			newUser.save();
 		}
 		return new ResponseEntity(HttpStatus.NO_CONTENT);
