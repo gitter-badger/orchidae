@@ -18,27 +18,23 @@ package com.github.cherimojava.orchidae.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import com.github.cherimojava.orchidae.SpringTestBase;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.bson.BsonDocument;
 import org.bson.BsonInt32;
 import org.bson.Document;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 
 import com.github.cherimojava.data.mongo.entity.Entity;
 import com.github.cherimojava.data.mongo.entity.EntityFactory;
 import com.github.cherimojava.data.mongo.entity.EntityUtils;
-import com.github.cherimojava.orchidae.TestBase;
-import com.github.cherimojava.orchidae.config.cfgMongo;
+import com.github.cherimojava.orchidae.SpringTestBase;
 import com.github.cherimojava.orchidae.entity.User;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
-
-import java.util.concurrent.atomic.AtomicInteger;
-
 
 public class _UserUtil extends SpringTestBase {
 
@@ -57,12 +53,12 @@ public class _UserUtil extends SpringTestBase {
 		for (int i = 0; i < userUtil.cacheSize + 2; i++) {
 			// just create those users in time
 			factory.create(User.class).setUsername("" + i).setPassword("123456").setPictureCount(new AtomicInteger(10)).save();
-			User u = userUtil.getUser(""+i);
+			User u = userUtil.getUser("" + i);
 			u.getPictureCount().incrementAndGet();
 			u.setFirstName("" + i);
 		}
 		MongoCollection coll = db.getCollection(EntityUtils.getCollectionName(User.class));
-		assertEquals(23, coll.count());
+		assertEquals(22, coll.count());
 
 		MongoCursor<Document> cursor = coll.find().sort(new BsonDocument(Entity.ID, new BsonInt32(1))).iterator();
 		Document doc = cursor.next();
