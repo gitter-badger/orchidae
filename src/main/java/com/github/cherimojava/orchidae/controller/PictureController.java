@@ -117,7 +117,7 @@ public class PictureController {
 
 		MongoIterable<Picture> it = factory.getCollection(Picture.class).find(
 				new BsonDocument("user", new BsonString(user)), Picture.class).limit(number).sort(
-				new Document("uploadDate", 1));
+				new Document("order", 1));
 		return Lists.newArrayList(it);
 	}
 
@@ -205,6 +205,7 @@ public class PictureController {
 			picture.setId(generateId());
 			picture.setOriginalName(file.getOriginalFilename());
 			picture.setUploadDate(DateTime.now());
+			picture.setOrder(user.getPictureCount().getAndIncrement());
 
 			String type = StringUtils.substringAfterLast(file.getOriginalFilename(), ".");
 
@@ -226,6 +227,7 @@ public class PictureController {
 				LOG.warn("failed to store picture", e);
 				badFiles.add(file.getOriginalFilename());
 			}
+			user.save();//We should persist this information? Or should we rely on the persistence magic?
 		}
 		if (badFiles.isEmpty()) {
 			return new ResponseEntity<>("You successfully uploaded!", HttpStatus.CREATED);

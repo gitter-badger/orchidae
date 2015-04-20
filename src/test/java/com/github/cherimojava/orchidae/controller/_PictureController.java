@@ -32,10 +32,10 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.imageio.ImageIO;
 
-import com.github.cherimojava.orchidae.util.UserUtil;
 import org.bson.Document;
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -67,6 +67,7 @@ import com.github.cherimojava.orchidae.entity.BatchUpload;
 import com.github.cherimojava.orchidae.entity.Picture;
 import com.github.cherimojava.orchidae.entity.User;
 import com.github.cherimojava.orchidae.util.FileUtil;
+import com.github.cherimojava.orchidae.util.UserUtil;
 import com.mongodb.client.MongoDatabase;
 
 //TODO add test for permissions
@@ -104,7 +105,9 @@ public class _PictureController extends ControllerTestBase {
 
 		setAuthentication(owner);
 
-		factory.create(User.class).setUsername(ownr).setPassword("1").setMemberSince(DateTime.now()).save();
+		//TODO this information should be pulled out from somewhere else
+		factory.create(User.class).setUsername(ownr).setPassword("1").setMemberSince(DateTime.now()).setPictureCount(
+				new AtomicInteger(0)).save();
 
 		session = new MockHttpSession();
 		session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
@@ -135,8 +138,8 @@ public class _PictureController extends ControllerTestBase {
 
 		// verify we have two pictures now
 		getLatest(10).andExpect(jsonPath("$[0].title", is("test"))).andExpect(
-				jsonPath("$[0].originalName", is("test.jpg"))).andExpect(jsonPath("$[1].title", is("b"))).andExpect(
-				jsonPath("$[1].originalName", is("b.png")));
+				jsonPath("$[0].originalName", is("test.jpg"))).andExpect(jsonPath("$[0].order",is(1))).andExpect(jsonPath("$[1].title", is("b"))).andExpect(
+				jsonPath("$[1].originalName", is("b.png"))).andExpect(jsonPath("$[1].order", is(2)));
 
 		// check that if some IOException happens we get it returned appropriate
 		MockMultipartFile file = new MockMultipartFile("b", "b.png", "image/png", "nonsensecontent".getBytes());
@@ -252,7 +255,7 @@ public class _PictureController extends ControllerTestBase {
 		getLatest(10).andExpect(jsonPath("$[0].title", is("b"))).andExpect(jsonPath("$[0].batchUpload", is(batchId))).andExpect(
 				jsonPath("$[0].originalName", is("b.png"))).andExpect(jsonPath("$[1].title", is("c"))).andExpect(
 				jsonPath("$[1].batchUpload", is(batchId))).andExpect(jsonPath("$[1].originalName", is("c.png")));
-		assertEquals(2,factory.load(BatchUpload.class,batchId).getPictures().size());
+		assertEquals(2, factory.load(BatchUpload.class, batchId).getPictures().size());
 	}
 
 	private ResultActions createPicture(String name, String type) throws Exception {

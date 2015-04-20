@@ -111,4 +111,13 @@ public interface Picture extends Entity<Picture> {
 	public BatchUpload getBatchUpload();
 
 	public Picture setBatchUpload(BatchUpload batch);
+
+	/**
+	 * order number providing information about the ordering of the picture within the users timeline
+	 * 
+	 * @return
+	 */
+	public int getOrder();
+
+	public Picture setOrder(int order);
 }
