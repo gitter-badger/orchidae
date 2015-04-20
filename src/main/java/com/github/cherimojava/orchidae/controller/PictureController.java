@@ -205,7 +205,7 @@ public class PictureController {
 			picture.setId(generateId());
 			picture.setOriginalName(file.getOriginalFilename());
 			picture.setUploadDate(DateTime.now());
-			picture.setOrder(user.getPictureCount().getAndIncrement());
+			picture.setOrder(user.getPictureCount().incrementAndGet());
 
 			String type = StringUtils.substringAfterLast(file.getOriginalFilename(), ".");
 

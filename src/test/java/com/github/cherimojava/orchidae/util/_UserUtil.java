@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.bson.BsonDocument;
 import org.bson.BsonInt32;
 import org.bson.Document;
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,7 @@ public class _UserUtil extends SpringTestBase {
 		String firstName = "firstName";
 		for (int i = 0; i < userUtil.cacheSize + 2; i++) {
 			// just create those users in time
-			factory.create(User.class).setUsername("" + i).setPassword("123456").setPictureCount(new AtomicInteger(10)).save();
+			factory.create(User.class).setUsername("" + i).setPassword("123456").setMemberSince(DateTime.now()).setPictureCount(new AtomicInteger(10)).save();
 			User u = userUtil.getUser("" + i);
 			u.getPictureCount().incrementAndGet();
 			u.setFirstName("" + i);

@@ -116,7 +116,7 @@ public class _PictureController extends ControllerTestBase {
 
 	@After
 	public void cleanUp() {
-		userUtil.clear();
+		userUtil._clear();
 		db.getCollection(EntityUtils.getCollectionName(Picture.class)).deleteMany(new Document());
 		db.getCollection(EntityUtils.getCollectionName(BatchUpload.class)).deleteMany(new Document());
 		db.getCollection(EntityUtils.getCollectionName(User.class)).deleteMany(new Document());
@@ -132,15 +132,16 @@ public class _PictureController extends ControllerTestBase {
 
 		// make sure the picture is there
 		getLatest(10).andExpect(jsonPath("$[0].title", is("test"))).andExpect(
-				jsonPath("$[0].originalName", is("test.jpg")));
+				jsonPath("$[0].originalName", is("test.jpg"))).andExpect(jsonPath("$[0].order", is(1)));
 
+		userUtil._clear();
 		// Upload another picture
 		createPicture("b", "png");
 
 		// verify we have two pictures now
 		getLatest(10).andExpect(jsonPath("$[0].title", is("test"))).andExpect(
-				jsonPath("$[0].originalName", is("test.jpg"))).andExpect(jsonPath("$[0].order", is(0))).andExpect(jsonPath("$[1].title", is("b"))).andExpect(
-				jsonPath("$[1].originalName", is("b.png"))).andExpect(jsonPath("$[1].order", is(1)));
+				jsonPath("$[0].originalName", is("test.jpg"))).andExpect(jsonPath("$[0].order", is(1))).andExpect(jsonPath("$[1].title", is("b"))).andExpect(
+				jsonPath("$[1].originalName", is("b.png"))).andExpect(jsonPath("$[1].order", is(2)));
 
 		// check that if some IOException happens we get it returned appropriate
 		MockMultipartFile file = new MockMultipartFile("b", "b.png", "image/png", "nonsensecontent".getBytes());

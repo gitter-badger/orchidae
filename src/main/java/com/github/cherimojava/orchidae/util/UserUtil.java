@@ -85,7 +85,7 @@ public class UserUtil {
      * on shutdown save all users and clear cache
      */
     @PreDestroy
-    public void clear() {
+    public void _clear() {
         for (User user : registry.asMap().values()) {
             user.save();
         }
