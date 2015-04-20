@@ -18,6 +18,7 @@ package com.github.cherimojava.orchidae.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import com.github.cherimojava.orchidae.SpringTestBase;
 import org.bson.BsonDocument;
 import org.bson.BsonInt32;
 import org.bson.Document;
@@ -36,8 +37,10 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
-@ContextConfiguration(classes = cfgMongo.class)
-public class _UserUtil extends TestBase {
+import java.util.concurrent.atomic.AtomicInteger;
+
+
+public class _UserUtil extends SpringTestBase {
 
 	@Autowired
 	UserUtil userUtil;
@@ -53,11 +56,13 @@ public class _UserUtil extends TestBase {
 		String firstName = "firstName";
 		for (int i = 0; i < userUtil.cacheSize + 2; i++) {
 			// just create those users in time
-			factory.create(User.class).setUsername("" + i).setPassword("123456").save();
-			userUtil.getUser("" + i).setFirstName("" + i);
+			factory.create(User.class).setUsername("" + i).setPassword("123456").setPictureCount(new AtomicInteger(10)).save();
+			User u = userUtil.getUser(""+i);
+			u.getPictureCount().incrementAndGet();
+			u.setFirstName("" + i);
 		}
 		MongoCollection coll = db.getCollection(EntityUtils.getCollectionName(User.class));
-		assertEquals(22, coll.count());
+		assertEquals(23, coll.count());
 
 		MongoCursor<Document> cursor = coll.find().sort(new BsonDocument(Entity.ID, new BsonInt32(1))).iterator();
 		Document doc = cursor.next();

@@ -23,6 +23,8 @@ import com.github.cherimojava.data.mongo.entity.Entity;
 import com.github.cherimojava.data.mongo.entity.annotation.Final;
 import com.github.cherimojava.data.mongo.entity.annotation.Id;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Entity for users on the system
  */
@@ -77,4 +79,13 @@ public interface User extends Entity<User> {
 	public DateTime getMemberSince();
 
 	public User setMemberSince(DateTime registered);
+
+	public AtomicInteger getPictureCount();
+
+	/**
+	 * don't call this directly except for setup.
+	 * @param i
+	 * @return
+	 */
+	public User setPictureCount(AtomicInteger i);
 }

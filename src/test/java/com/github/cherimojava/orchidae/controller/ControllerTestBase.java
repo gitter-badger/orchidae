@@ -17,8 +17,12 @@ package com.github.cherimojava.orchidae.controller;
 
 import static org.junit.Assert.assertThat;
 
+import com.github.cherimojava.orchidae.SpringTestBase;
 import org.hamcrest.Matcher;
+import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.github.cherimojava.orchidae.TestBase;
@@ -26,9 +30,10 @@ import com.github.cherimojava.orchidae.config.WebMvcConfig;
 import com.github.cherimojava.orchidae.config.cfgMongo;
 import com.google.common.base.Joiner;
 
-@ContextConfiguration(classes = { cfgMongo.class, WebMvcConfig.class })
+@ContextHierarchy(@ContextConfiguration(classes = { WebMvcConfig.class }))
 @WebAppConfiguration
-public class ControllerTestBase extends TestBase {
+@RunWith(SpringJUnit4ClassRunner.class)
+public class ControllerTestBase extends SpringTestBase {
 
 	public void assertJson(Matcher<? super String> expected, String actual) {
 		assertThat(actual, expected);

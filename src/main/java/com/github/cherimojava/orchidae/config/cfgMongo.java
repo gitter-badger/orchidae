@@ -66,7 +66,6 @@ import de.flapdoodle.embed.process.store.Downloader;
 @Configuration
 @Import({ cfgProduction.class, cfgTest.class })
 public class cfgMongo {
-	// TODO make this config available/should be possible to include it but not loading it
 
 	@Autowired
 	@Named("dbName")
@@ -79,7 +78,6 @@ public class cfgMongo {
 	@Value("${log.path:./log}")
 	String logPath;
 
-	// TODO make mongo optional
 	private MongodExecutable exe;
 
 	File mongoStoragePath() {

@@ -15,16 +15,17 @@
  */
 package com.github.cherimojava.orchidae;
 
-import com.github.cherimojava.orchidae.config.RootConfig;
 import org.junit.runner.RunWith;
+import org.junit.runners.BlockJUnit4ClassRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.github.cherimojava.orchidae.config.RootConfig;
 
 @ActiveProfiles(RootConfig.PROFILE_TESTING)
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(BlockJUnit4ClassRunner.class)
 public class TestBase {
 
 	protected String ownr = "owner";
