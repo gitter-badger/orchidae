@@ -193,7 +193,7 @@ public class PictureController {
 	 * @since 1.0.0
 	 */
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<String> handleFileUpload(MultipartHttpServletRequest request) {
+	public ResponseEntity<String> handleFileUpload(MultipartHttpServletRequest request,@RequestParam("batch") String batchId) {
 		List<String> badFiles = Lists.newArrayList();
 		User user = userUtil.getUser((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 		for (Iterator<String> it = request.getFileNames(); it.hasNext();) {
@@ -221,7 +221,7 @@ public class PictureController {
 				picture.setAccess(Access.PRIVATE);// TODO for now only private access
 				createSmall(picture.getId(), image, type);
 				LOG.info("Uploaded {} and assigned id {}", file.getOriginalFilename(), picture.getId());
-				checkBatch(picture, request);
+				checkBatch(picture, batchId);
 				picture.save();
 			} catch (Exception e) {
 				LOG.warn("failed to store picture", e);
@@ -243,9 +243,8 @@ public class PictureController {
 	 * @param pic
 	 * @param request
 	 */
-	private void checkBatch(Picture pic, MultipartHttpServletRequest request) {
-		if (StringUtils.isNotEmpty(request.getParameter(BATCH_IDENTIFIER))) {
-			String batchId = request.getParameter(BATCH_IDENTIFIER);
+	private void checkBatch(Picture pic, String batchId) {
+		if (StringUtils.isNotEmpty(batchId)) {
 			if (!FileUtil.validateId(batchId)) {
 				// ignore the batching if the id isn't valid
 				return;

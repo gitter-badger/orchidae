@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.github.cherimojava.orchidae.util.FileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -73,7 +74,7 @@ public class LayoutController {
 		}
 		if (UPLOAD_PAGE.equals(page)) {
 			// provide some batch uuid, which will later be used to group all those pictures uploaded in a batch
-			map.addAttribute("batch", UUID.randomUUID().toString());
+			map.addAttribute("batch", FileUtil.generateId());
 		}
 		return "layout/" + page;
 	}
