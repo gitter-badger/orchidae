@@ -20,13 +20,18 @@ import javax.validation.constraints.NotNull;
 import org.joda.time.DateTime;
 
 import com.github.cherimojava.data.mongo.entity.Entity;
+import com.github.cherimojava.data.mongo.entity.annotation.Collection;
 import com.github.cherimojava.data.mongo.entity.annotation.Final;
 import com.github.cherimojava.data.mongo.entity.annotation.Id;
+import com.github.cherimojava.data.mongo.entity.annotation.Index;
+import com.github.cherimojava.data.mongo.entity.annotation.IndexField;
 import com.github.cherimojava.data.mongo.entity.annotation.Reference;
 
 /**
  * Picture object contains everything an Object needs to have
  */
+@Collection(indexes = @Index(name = "timeline", value = { @IndexField(field = "user", order = IndexField.Ordering.ASC),
+		@IndexField(field = "order", order = IndexField.Ordering.DESC) }))
 public interface Picture extends Entity<Picture> {
 
 	/**
@@ -39,7 +44,7 @@ public interface Picture extends Entity<Picture> {
 
 	// TODO final should work here too?
 	// @Final
-	@NotNull(groups= Entity.Special.class)
+	@NotNull(groups = Entity.Special.class)
 	@Reference
 	public User getUser();
 
