@@ -51,15 +51,16 @@ import com.google.common.collect.ImmutableList;
 public class LayoutController {
 
 	private static final Logger LOG = LogManager.getLogger();
-
 	@Autowired
 	PasswordEncoder pwEncoder;
 
 	@Autowired
 	private EntityFactory factory;
 
-	private static final String UPLOAD_PAGE = "upload";
+	protected static final String UPLOAD_PAGE = "upload";
+
 	private static final List<String> formPages = ImmutableList.of("register", "login", UPLOAD_PAGE);
+	protected static final String BATCH = "batch";
 
 	/**
 	 * Serves page layouts. Anything which ends with html is supposed to be a layout and will be handled through this
@@ -74,7 +75,7 @@ public class LayoutController {
 		}
 		if (UPLOAD_PAGE.equals(page)) {
 			// provide some batch uuid, which will later be used to group all those pictures uploaded in a batch
-			map.addAttribute("batch", FileUtil.generateId());
+			map.addAttribute(BATCH, FileUtil.generateId());
 		}
 		return "layout/" + page;
 	}
