@@ -25,7 +25,6 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import com.github.cherimojava.orchidae.util.UserUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -60,6 +59,7 @@ import com.github.cherimojava.orchidae.entity.BatchUpload;
 import com.github.cherimojava.orchidae.entity.Picture;
 import com.github.cherimojava.orchidae.entity.User;
 import com.github.cherimojava.orchidae.util.FileUtil;
+import com.github.cherimojava.orchidae.util.UserUtil;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mongodb.client.MongoIterable;
@@ -193,7 +193,8 @@ public class PictureController {
 	 * @since 1.0.0
 	 */
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<String> handleFileUpload(MultipartHttpServletRequest request,@RequestParam("batch") String batchId) {
+	public ResponseEntity<String> handleFileUpload(MultipartHttpServletRequest request,
+			@RequestParam(value = "batch", required = false) String batchId) {
 		List<String> badFiles = Lists.newArrayList();
 		User user = userUtil.getUser((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 		for (Iterator<String> it = request.getFileNames(); it.hasNext();) {
@@ -227,7 +228,7 @@ public class PictureController {
 				LOG.warn("failed to store picture", e);
 				badFiles.add(file.getOriginalFilename());
 			}
-			user.save();//We should persist this information? Or should we rely on the persistence magic?
+			user.save();// We should persist this information? Or should we rely on the persistence magic?
 		}
 		if (badFiles.isEmpty()) {
 			return new ResponseEntity<>("You successfully uploaded!", HttpStatus.CREATED);
