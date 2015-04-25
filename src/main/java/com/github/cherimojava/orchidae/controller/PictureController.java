@@ -242,7 +242,7 @@ public class PictureController {
 	 * check if batching should applied to the current picture upload
 	 * 
 	 * @param pic
-	 * @param request
+	 * @param batchId
 	 */
 	private void checkBatch(Picture pic, String batchId) {
 		if (StringUtils.isNotEmpty(batchId)) {

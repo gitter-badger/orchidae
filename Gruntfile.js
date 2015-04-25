@@ -102,13 +102,13 @@ module.exports = function (grunt) {
 					},
 					{//dropzone js
 						expand: true,
-						cwd: bowerDir + 'dropzone/downloads/',
+						cwd: bowerDir + 'dropzone/dist/min/',
 						src: ['dropzone.min.js'],
 						dest: jsDir
 					},
 					{//dropzone css
 						expand: true,
-						cwd: bowerDir + 'dropzone/downloads/css',
+						cwd: bowerDir + 'dropzone/dist',
 						src: ['dropzone.css', 'basic.css'],
 						dest: cssDir
 					}
