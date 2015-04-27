@@ -63,6 +63,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.cherimojava.data.mongo.entity.EntityFactory;
 import com.github.cherimojava.data.mongo.entity.EntityUtils;
 import com.github.cherimojava.data.spring.EntityConverter;
+import com.github.cherimojava.orchidae.controller.api.UploadResponse;
 import com.github.cherimojava.orchidae.entity.BatchUpload;
 import com.github.cherimojava.orchidae.entity.Picture;
 import com.github.cherimojava.orchidae.entity.User;
@@ -105,7 +106,7 @@ public class _PictureController extends ControllerTestBase {
 
 		setAuthentication(owner);
 
-		//TODO this information should be pulled out from somewhere else
+		// TODO this information should be pulled out from somewhere else
 		factory.create(User.class).setUsername(ownr).setPassword("1").setMemberSince(DateTime.now()).setPictureCount(
 				new AtomicInteger(0)).save();
 
@@ -128,20 +129,27 @@ public class _PictureController extends ControllerTestBase {
 		getLatest(10).andExpect(content().string("[]"));
 
 		// upload one picture
-		createPicture("test", "jpg");
+		UploadResponse response = factory.readEntity(UploadResponse.class,
+				createPicture("test", "jpg").andReturn().getResponse().getContentAsString());
 
+		assertEquals(1, response.getIds().size());
+		assertTrue(FileUtil.validateId(response.getIds().get(0)));
 		// make sure the picture is there
 		getLatest(10).andExpect(jsonPath("$[0].title", is("test"))).andExpect(
 				jsonPath("$[0].originalName", is("test.jpg"))).andExpect(jsonPath("$[0].order", is(1)));
 
 		userUtil._clear();
 		// Upload another picture
-		createPicture("b", "png");
+		response = factory.readEntity(UploadResponse.class,
+				createPicture("b", "png").andReturn().getResponse().getContentAsString());
+		assertEquals(1, response.getIds().size());
+		assertTrue(FileUtil.validateId(response.getIds().get(0)));
 
 		// verify we have two pictures now
 		getLatest(10).andExpect(jsonPath("$[0].title", is("test"))).andExpect(
-				jsonPath("$[0].originalName", is("test.jpg"))).andExpect(jsonPath("$[0].order", is(1))).andExpect(jsonPath("$[1].title", is("b"))).andExpect(
-				jsonPath("$[1].originalName", is("b.png"))).andExpect(jsonPath("$[1].order", is(2)));
+				jsonPath("$[0].originalName", is("test.jpg"))).andExpect(jsonPath("$[0].order", is(1))).andExpect(
+				jsonPath("$[1].title", is("b"))).andExpect(jsonPath("$[1].originalName", is("b.png"))).andExpect(
+				jsonPath("$[1].order", is(2)));
 
 		// check that if some IOException happens we get it returned appropriate
 		MockMultipartFile file = new MockMultipartFile("b", "b.png", "image/png", "nonsensecontent".getBytes());
@@ -266,7 +274,8 @@ public class _PictureController extends ControllerTestBase {
 			byte[] bytes = StreamUtils.copyToByteArray(s);
 			MockMultipartFile file = new MockMultipartFile(name, name + "." + type, "image/" + type, bytes);
 			return mvc.perform(fileUpload("/picture").file(file).accept(MediaType.APPLICATION_JSON).session(session)).andExpect(
-					status().isCreated()).andExpect(content().contentType(MediaType.APPLICATION_JSON));
+					status().isCreated()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(
+					content().string(containsString("ids")));
 		}
 	}
 
