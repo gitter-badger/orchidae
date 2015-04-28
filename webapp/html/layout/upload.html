@@ -1,6 +1,6 @@
 <form dropzone="dropzoneUpload" enctype="multipart/form-data" action="/picture" class="dropzone"
       ng-controller="dropzoneCtrl">
     <div id="previews" class="dropzone-previews"></div>
-    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="_csrf"/>
     <input type="hidden" name="batch" value="$batch"/>
 </form>

@@ -16,17 +16,29 @@
       });
     };
   });
-  orchidae.controller('dropzoneCtrl', function($scope) {
+  orchidae.controller('dropzoneCtrl', function($scope, $http) {
     $scope.dropzoneUpload = {
       'options': { // passed into the Dropzone constructor
         url: "/picture", // Set the url
         previewsContainer: "#previews", // Define the container to display the previews
-        acceptedMimeTypes: "image/*"
+        acceptedMimeTypes: "image/*",
+        addRemoveLinks: "true"
       },
       'eventHandlers': {
-        'sending': function(file, xhr, formData) {
-        },
         'success': function(file, response) {
+          file.picId = response.ids[0];
+        },
+        'removedfile': function(file) {
+          if (file.picId != null) {
+            //if the file was uploaded already, we need to call for removal
+            $http({
+              method: 'DELETE',
+              url: './picture/admin/' + file.picId,
+              headers: {//With this trick we get the csrf up and running again
+                'X-CSRF-TOKEN': document.getElementById("_csrf").value
+              }
+            })
+          }
         }
       }
     };

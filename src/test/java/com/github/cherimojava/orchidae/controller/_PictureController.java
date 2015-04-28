@@ -23,6 +23,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -242,6 +243,8 @@ public class _PictureController extends ControllerTestBase {
 				PostFilter.class));
 		assertTrue(PictureController.class.getMethod("getPictureMeta", String.class, String.class).isAnnotationPresent(
 				PreAuthorize.class));
+		assertTrue(PictureController.class.getMethod("deletePicture", String.class, String.class).isAnnotationPresent(
+				PreAuthorize.class));
 	}
 
 	@Test
@@ -266,6 +269,17 @@ public class _PictureController extends ControllerTestBase {
 				jsonPath("$[0].originalName", is("b.png"))).andExpect(jsonPath("$[1].title", is("c"))).andExpect(
 				jsonPath("$[1].batchUpload", is(batchId))).andExpect(jsonPath("$[1].originalName", is("c.png")));
 		assertEquals(2, factory.load(BatchUpload.class, batchId).getPictures().size());
+	}
+
+	@Test
+	public void deletePicture() throws Exception {
+		UploadResponse response = factory.readEntity(UploadResponse.class, createPicture("one", "png").andReturn().getResponse().getContentAsString());
+		mvc.perform(delete(url(response.getIds().get(0)))).andExpect(status().isOk());
+	}
+
+	@Test
+	public void deletePictureNotFound() throws Exception {
+		mvc.perform(delete(url("doesntExist"))).andExpect(status().isNotFound());
 	}
 
 	private ResultActions createPicture(String name, String type) throws Exception {

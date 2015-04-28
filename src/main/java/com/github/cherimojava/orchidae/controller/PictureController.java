@@ -20,13 +20,11 @@ import static com.github.cherimojava.orchidae.util.FileUtil.generateId;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import com.github.cherimojava.orchidae.controller.api.UploadResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -56,6 +54,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.github.cherimojava.data.mongo.entity.EntityFactory;
+import com.github.cherimojava.orchidae.controller.api.UploadResponse;
 import com.github.cherimojava.orchidae.entity.Access;
 import com.github.cherimojava.orchidae.entity.BatchUpload;
 import com.github.cherimojava.orchidae.entity.Picture;
@@ -74,6 +73,11 @@ import com.mongodb.client.MongoIterable;
 @RestController
 @RequestMapping(value = "/picture")
 public class PictureController {
+
+	/**
+	 * URI pattern for pictures
+	 */
+	public static final String PICTURE_URI = "/{user}/{id:[a-f0-9]+}";
 
 	@Value("${limit.latestPictures:30}")
 	int latestPictureLimit;
@@ -124,12 +128,14 @@ public class PictureController {
 	}
 
 	/**
-	 * serves the requested picture thumbnail {id} for the given {user}
+	 * serves the requested picture {id} and size {f} for the given {user}
 	 * 
 	 * @param user
 	 *            user to lookup picture
 	 * @param id
 	 *            id of the picture to load
+	 * @param format
+	 *            the format/Size of the picture to return
 	 * @return the picture which belongs to the given id, or {@link org.springframework.http.HttpStatus#NOT_FOUND} if no
 	 *         such picture exists
 	 * @throws IOException
@@ -137,7 +143,7 @@ public class PictureController {
 	 * @see {@link #_getPicture(String, String)}
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/{user}/{id:[a-f0-9]+}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE, params = "f")
+	@RequestMapping(value = PICTURE_URI, method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE, params = "f")
 	@PreAuthorize("@paa.hasAccess(#id)")
 	public ResponseEntity<Resource> getPicture(@PathVariable("user") String user, @PathVariable("id") String id,
 			@RequestParam(value = "f") String format) throws IOException {
@@ -152,13 +158,46 @@ public class PictureController {
 		}
 	}
 
+	/**
+	 * serves the requested picture {id} metadata for the given {user}
+	 * 
+	 * @param user
+	 *            user to lookup picture
+	 * @param id
+	 *            picture id to lookup
+	 * @return picture metadata
+	 */
 	@ResponseBody
-	@RequestMapping(value = "/{user}/{id:[a-f0-9]+}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, params = "!f")
+	@RequestMapping(value = PICTURE_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, params = "!f")
 	@PreAuthorize("@paa.hasAccess(#id)")
 	public ResponseEntity<Picture> getPictureMeta(@PathVariable("user") String user, @PathVariable("id") String id) {
 		Picture pic = factory.load(Picture.class, id);
 		return (pic != null) ? new ResponseEntity<>(pic, HttpStatus.OK) : new ResponseEntity<Picture>(
 				HttpStatus.NOT_FOUND);
+	}
+
+	/**
+	 * deletes the given picture {id} and all related data for the given {user}
+	 * 
+	 * @param user
+	 *            user to lookup picture
+	 * @param id
+	 *            picture to delete
+	 * @return appropriate HTTP code
+	 */
+	@ResponseBody
+	@RequestMapping(value = PICTURE_URI, method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize("@paa.canDelete(#id)")
+	public ResponseEntity<String> deletePicture(@PathVariable("user") String user, @PathVariable("id") String id) {
+		Picture pic = factory.load(Picture.class, id);
+		if (pic != null) {
+			File f = fileUtil.getFileHandle(pic.getId());
+			f.delete();
+			new File(f.getAbsolutePath() + "_s").delete();
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
@@ -227,7 +266,7 @@ public class PictureController {
 				LOG.info("Uploaded {} and assigned id {}", file.getOriginalFilename(), picture.getId());
 				checkBatch(picture, batchId);
 				picture.save();
-				//after the picture is saved we can add it to the response
+				// after the picture is saved we can add it to the response
 				response.addIds(picture.getId());
 			} catch (Exception e) {
 				LOG.warn("failed to store picture", e);
@@ -238,7 +277,7 @@ public class PictureController {
 		if (badFiles.isEmpty()) {
 			return new ResponseEntity<>(response, HttpStatus.CREATED);
 		} else {
-			response.setIds(Lists.<String>newArrayList());
+			response.setIds(Lists.<String> newArrayList());
 			return new ResponseEntity<>(response.setMsg("Could not upload all files. Failed to upload: "
 					+ Joiner.on(",").join(badFiles)), HttpStatus.OK);
 		}

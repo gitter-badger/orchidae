@@ -31,43 +31,63 @@ import com.github.cherimojava.orchidae.entity.Picture;
 import com.github.cherimojava.orchidae.entity.User;
 
 public class _PictureAccessAuthenticator extends TestBase {
-    @Mock
-    EntityFactory factory;
+	@Mock
+	EntityFactory factory;
 
-    Picture pic;
+	Picture pic;
 
-    PictureAccessAuthenticator paa;
+	PictureAccessAuthenticator paa;
 
-    String id = "id";
+	String id = "id";
 
-    @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        pic = EntityFactory.instantiate(Picture.class);
+	@Before
+	public void setup() {
+		MockitoAnnotations.initMocks(this);
+		pic = EntityFactory.instantiate(Picture.class);
 
-        pic.setUser(EntityFactory.instantiate(User.class).setUsername(ownr));
-        when(factory.load(Picture.class, id)).thenReturn(pic);
-        paa = new PictureAccessAuthenticator();
-        paa.factory = factory;
-    }
+		pic.setUser(EntityFactory.instantiate(User.class).setUsername(ownr));
+		when(factory.load(Picture.class, id)).thenReturn(pic);
+		paa = new PictureAccessAuthenticator();
+		paa.factory = factory;
+	}
 
-    @Test
-    public void userAccessOwnPictures() {
-        setAuthentication(owner);
-        assertTrue(paa.hasAccess(id));
-        pic.setAccess(Access.PRIVATE);
-        assertTrue(paa.hasAccess(id));
-        pic.setAccess(Access.PUBLIC);
-        assertTrue(paa.hasAccess(id));
-    }
+	@Test
+	public void userAccessOwnPictures() {
+		setAuthentication(owner);
+		assertTrue(paa.hasAccess(id));
+		pic.setAccess(Access.PRIVATE);
+		assertTrue(paa.hasAccess(id));
+		pic.setAccess(Access.PUBLIC);
+		assertTrue(paa.hasAccess(id));
+	}
 
-    @Test
-    public void otherUserOnlyPublic() {
-        setAuthentication(other);
-        assertFalse(paa.hasAccess(id));
-        pic.setAccess(Access.PRIVATE);
-        assertFalse(paa.hasAccess(id));
-        pic.setAccess(Access.PUBLIC);
-        assertTrue(paa.hasAccess(id));
-    }
+	@Test
+	public void otherUserOnlyPublic() {
+		setAuthentication(other);
+		assertFalse(paa.hasAccess(id));
+		pic.setAccess(Access.PRIVATE);
+		assertFalse(paa.hasAccess(id));
+		pic.setAccess(Access.PUBLIC);
+		assertTrue(paa.hasAccess(id));
+	}
+
+	@Test
+	public void userDeletePermission() {
+		setAuthentication(owner);
+		assertTrue(paa.canDelete(id));
+		pic.setAccess(Access.PRIVATE);
+		assertTrue(paa.canDelete(id));
+		pic.setAccess(Access.PUBLIC);
+		assertTrue(paa.canDelete(id));
+	}
+
+	@Test
+	public void otherDeletePermission() {
+		setAuthentication(other);
+		assertFalse(paa.canDelete(id));
+		pic.setAccess(Access.PRIVATE);
+		assertFalse(paa.canDelete(id));
+		pic.setAccess(Access.PUBLIC);
+		assertFalse(paa.canDelete(id));
+	}
 }
