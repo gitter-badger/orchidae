@@ -14,6 +14,7 @@ To peek into the jar created: `jar tvf target/orchidae-1.0-SNAPSHOT.jar`
 
 ```
 npm install
+npm install protractor
 bower install
 grunt
 ```

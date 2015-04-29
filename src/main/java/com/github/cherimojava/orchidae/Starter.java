@@ -17,6 +17,7 @@ package com.github.cherimojava.orchidae;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 
 import javax.servlet.MultipartConfigElement;
 
@@ -66,7 +67,7 @@ public class Starter {
 		ServletContextHandler servletContext = new ServletContextHandler();
 		servletContext.addEventListener(new ContextLoaderListener(context));
 		ServletHolder holder = new ServletHolder("default", new DispatcherServlet(context));
-		holder.getRegistration().setMultipartConfig(new MultipartConfigElement("./tmp",20000000,20000000,200000));
+		holder.getRegistration().setMultipartConfig(new MultipartConfigElement("./tmp", 20000000, 20000000, 200000));
 		servletContext.addServlet(holder, "/*");
 		servletContext.addEventListener(new ServletListener(context));
 		servletContext.setResourceBase(new FileSystemResource(new File("./")).toString());
@@ -75,7 +76,7 @@ public class Starter {
 	}
 
 	private Starter(int port) throws Exception {
-		Server server = new Server(8082);
+		Server server = new Server(InetSocketAddress.createUnresolved("localhost", 8082));
 		server.setHandler(getServletContextHandler(getContext()));
 		server.start();
 		server.join();
