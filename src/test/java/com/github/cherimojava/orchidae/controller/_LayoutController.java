@@ -16,6 +16,7 @@
 package com.github.cherimojava.orchidae.controller;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,8 @@ import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockSettings;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.ui.ModelMap;
 
 import com.github.cherimojava.orchidae.util.FileUtil;
@@ -34,6 +37,7 @@ public class _LayoutController extends ControllerTestBase {
 	@Before
 	public void setup() {
 		controller = new LayoutController();
+		controller.tokenRepository = mock(CsrfTokenRepository.class, RETURNS_DEEP_STUBS);
 	}
 
 	@Test

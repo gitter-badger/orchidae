@@ -266,6 +266,9 @@
                     <includes>
                         <include>**/*.java</include>
                     </includes>
+                    <excludes>
+                        <exclude>**/CsrfHeaderFilter.java</exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>

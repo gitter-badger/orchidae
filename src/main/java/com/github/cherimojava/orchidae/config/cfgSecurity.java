@@ -15,6 +15,7 @@
  */
 package com.github.cherimojava.orchidae.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,7 +27,11 @@ import org.springframework.security.config.annotation.web.servlet.configuration.
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
+import com.github.cherimojava.orchidae.security.CsrfHeaderFilter;
 import com.github.cherimojava.orchidae.security.MongoAuthenticationProvider;
 import com.github.cherimojava.orchidae.security.MongoUserDetailService;
 import com.github.cherimojava.orchidae.security.authenticator.PictureAccessAuthenticator;
@@ -36,15 +41,26 @@ import com.github.cherimojava.orchidae.security.authenticator.PictureAccessAuthe
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class cfgSecurity extends WebSecurityConfigurerAdapter {
 
+	@Autowired
+	CsrfTokenRepository tokenRepository;
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests().antMatchers("/picture").authenticated().anyRequest().permitAll().and().formLogin().loginPage(
-				"/#/login").permitAll().loginProcessingUrl("/login.form");
+				"/#/login").permitAll().loginProcessingUrl("/login.form").and().addFilterAfter(new CsrfHeaderFilter(),
+				CsrfFilter.class).csrf().csrfTokenRepository(tokenRepository);
 	}
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(mongoAuthenticationProvider());
+	}
+
+	@Bean
+	protected CsrfTokenRepository csrfTokenRepository() {
+		HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
+		repository.setHeaderName("X-XSRF-TOKEN");
+		return repository;
 	}
 
 	@Bean

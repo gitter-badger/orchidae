@@ -35,6 +35,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,9 +58,11 @@ public class LayoutController {
 	@Autowired
 	private EntityFactory factory;
 
+	@Autowired
+	protected CsrfTokenRepository tokenRepository;
+
 	protected static final String UPLOAD_PAGE = "upload";
 
-	private static final List<String> formPages = ImmutableList.of("register", "login", UPLOAD_PAGE);
 	protected static final String BATCH = "batch";
 
 	/**
@@ -69,13 +72,11 @@ public class LayoutController {
 	@RequestMapping(value = "/**/{page}.html", method = GET)
 	public String layout(@PathVariable("page") String page, HttpSession session, HttpServletRequest request,
 			ModelMap map) {
-		if (formPages.contains(page)) {
-			// For form pages we have to add the csrf token
-			map.addAttribute("_csrf", request.getAttribute(CsrfToken.class.getName()));
-		}
 		if (UPLOAD_PAGE.equals(page)) {
 			// provide some batch uuid, which will later be used to group all those pictures uploaded in a batch
 			map.addAttribute(BATCH, FileUtil.generateId());
+			// For dropzone we have to add the csrf token
+			map.addAttribute("_csrf", tokenRepository.loadToken(request));
 		}
 		return "layout/" + page;
 	}

@@ -15,9 +15,6 @@
         url: './' + form + '.form',
         transformRequest: transformRequestAsFormPost,
         data: $scope.data,
-        headers: {//With this trick we get the csrf up and running again
-          'X-CSRF-TOKEN': document.getElementById("_csrf").value
-        }
       }).success(callback).error(function(data, status, headers, config) {
         if (status == 400) {
           $scope.messages = data;
