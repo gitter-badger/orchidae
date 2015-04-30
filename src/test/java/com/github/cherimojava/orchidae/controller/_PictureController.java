@@ -273,8 +273,11 @@ public class _PictureController extends ControllerTestBase {
 
 	@Test
 	public void deletePicture() throws Exception {
+		assertEquals(0, db.getCollection(EntityUtils.getCollectionName(Picture.class)).count());
 		UploadResponse response = factory.readEntity(UploadResponse.class, createPicture("one", "png").andReturn().getResponse().getContentAsString());
+		assertEquals(1,db.getCollection(EntityUtils.getCollectionName(Picture.class)).count());
 		mvc.perform(delete(url(response.getIds().get(0)))).andExpect(status().isOk());
+		assertEquals(0, db.getCollection(EntityUtils.getCollectionName(Picture.class)).count());
 	}
 
 	@Test

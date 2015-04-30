@@ -194,6 +194,7 @@ public class PictureController {
 			File f = fileUtil.getFileHandle(pic.getId());
 			f.delete();
 			new File(f.getAbsolutePath() + "_s").delete();
+			pic.drop();
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
