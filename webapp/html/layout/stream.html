@@ -1,5 +1,5 @@
 <div ng-controller="PhotostreamController">
-    <div ng-repeat="photo in photos | reverse" class="photostream">
+    <div ng-repeat="photo in photos" class="photostream">
         <img ng-src="picture/admin/{{photo._id}}?f=s"/>
     </div>
 </div>

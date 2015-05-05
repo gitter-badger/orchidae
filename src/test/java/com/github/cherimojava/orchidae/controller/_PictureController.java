@@ -147,10 +147,10 @@ public class _PictureController extends ControllerTestBase {
 		assertTrue(FileUtil.validateId(response.getIds().get(0)));
 
 		// verify we have two pictures now
-		getLatest(10).andExpect(jsonPath("$[0].title", is("test"))).andExpect(
-				jsonPath("$[0].originalName", is("test.jpg"))).andExpect(jsonPath("$[0].order", is(1))).andExpect(
-				jsonPath("$[1].title", is("b"))).andExpect(jsonPath("$[1].originalName", is("b.png"))).andExpect(
-				jsonPath("$[1].order", is(2)));
+		getLatest(10).andExpect(jsonPath("$[1].title", is("test"))).andExpect(
+				jsonPath("$[1].originalName", is("test.jpg"))).andExpect(jsonPath("$[1].order", is(1))).andExpect(
+				jsonPath("$[0].title", is("b"))).andExpect(jsonPath("$[0].originalName", is("b.png"))).andExpect(
+				jsonPath("$[0].order", is(2)));
 
 		// check that if some IOException happens we get it returned appropriate
 		MockMultipartFile file = new MockMultipartFile("b", "b.png", "image/png", "nonsensecontent".getBytes());
@@ -212,8 +212,8 @@ public class _PictureController extends ControllerTestBase {
 		createPicture("one", "png");
 		Thread.sleep(10);
 		createPicture("two", "jpg");
-		getLatest(10).andExpect(jsonPath("$[0].originalName", is("one.png"))).andExpect(
-				jsonPath("$[1].originalName", is("two.jpg")));
+		getLatest(10).andExpect(jsonPath("$[1].originalName", is("one.png"))).andExpect(
+				jsonPath("$[0].originalName", is("two.jpg")));
 	}
 
 	@Test
@@ -265,9 +265,9 @@ public class _PictureController extends ControllerTestBase {
 							PictureController.BATCH_IDENTIFIER, batchId)).andExpect(status().isCreated()).andExpect(
 					content().contentType(MediaType.APPLICATION_JSON));
 		}
-		getLatest(10).andExpect(jsonPath("$[0].title", is("b"))).andExpect(jsonPath("$[0].batchUpload", is(batchId))).andExpect(
-				jsonPath("$[0].originalName", is("b.png"))).andExpect(jsonPath("$[1].title", is("c"))).andExpect(
-				jsonPath("$[1].batchUpload", is(batchId))).andExpect(jsonPath("$[1].originalName", is("c.png")));
+		getLatest(10).andExpect(jsonPath("$[1].title", is("b"))).andExpect(jsonPath("$[1].batchUpload", is(batchId))).andExpect(
+				jsonPath("$[1].originalName", is("b.png"))).andExpect(jsonPath("$[0].title", is("c"))).andExpect(
+				jsonPath("$[0].batchUpload", is(batchId))).andExpect(jsonPath("$[0].originalName", is("c.png")));
 		assertEquals(2, factory.load(BatchUpload.class, batchId).getPictures().size());
 	}
 

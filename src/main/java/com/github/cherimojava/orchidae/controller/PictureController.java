@@ -123,7 +123,7 @@ public class PictureController {
 
 		MongoIterable<Picture> it = factory.getCollection(Picture.class).find(
 				new BsonDocument("user", new BsonString(user)), Picture.class).limit(number).sort(
-				new Document("order", 1));
+				new Document("order", -1));
 		return Lists.newArrayList(it);
 	}
 
