@@ -21,9 +21,9 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -236,6 +236,16 @@ public class _PictureController extends ControllerTestBase {
 	}
 
 	@Test
+	public void pictureCount() throws Exception {
+		createPicture("one", "png");
+		mvc.perform(get(url("count"))).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(
+				content().string(sameJSONAs("{'count':1}"))).andExpect(status().isOk());
+		user = "nopictures";
+		mvc.perform(get(url("count"))).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(
+				content().string(sameJSONAs("{'count':0}"))).andExpect(status().isOk());
+	}
+
+	@Test
 	public void testAuthorizationDefined() throws NoSuchMethodException {
 		assertTrue(PictureController.class.getMethod("getPicture", String.class, String.class, String.class).isAnnotationPresent(
 				PreAuthorize.class));
@@ -274,8 +284,9 @@ public class _PictureController extends ControllerTestBase {
 	@Test
 	public void deletePicture() throws Exception {
 		assertEquals(0, db.getCollection(EntityUtils.getCollectionName(Picture.class)).count());
-		UploadResponse response = factory.readEntity(UploadResponse.class, createPicture("one", "png").andReturn().getResponse().getContentAsString());
-		assertEquals(1,db.getCollection(EntityUtils.getCollectionName(Picture.class)).count());
+		UploadResponse response = factory.readEntity(UploadResponse.class,
+				createPicture("one", "png").andReturn().getResponse().getContentAsString());
+		assertEquals(1, db.getCollection(EntityUtils.getCollectionName(Picture.class)).count());
 		mvc.perform(delete(url(response.getIds().get(0)))).andExpect(status().isOk());
 		assertEquals(0, db.getCollection(EntityUtils.getCollectionName(Picture.class)).count());
 	}

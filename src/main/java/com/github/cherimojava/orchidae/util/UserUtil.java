@@ -22,6 +22,7 @@ import javax.annotation.PreDestroy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.github.cherimojava.data.mongo.entity.Entity;
 import com.github.cherimojava.data.mongo.entity.EntityFactory;
@@ -81,6 +82,15 @@ public class UserUtil {
 			LOG.warn("failed to load user", e);
 			return null;
 		}
+	}
+
+	/**
+	 * returns the currently logged in User or null, if no user is currently logged in
+	 * 
+	 * @return the username or null if no user is logged in
+	 */
+	public static String getLoggedInUser() {
+		return (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 
 	/**

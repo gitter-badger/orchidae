@@ -16,6 +16,7 @@
 package com.github.cherimojava.orchidae.controller;
 
 import static com.github.cherimojava.orchidae.util.FileUtil.generateId;
+import static java.lang.String.format;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -25,6 +26,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import com.mongodb.client.FindIterable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -125,6 +127,25 @@ public class PictureController {
 				new BsonDocument("user", new BsonString(user)), Picture.class).limit(number).sort(
 				new Document("order", -1));
 		return Lists.newArrayList(it);
+	}
+
+	/**
+	 * returns the total number of pictures for this user according to the permissions of the requester. E.g. the owner
+	 * will get private pictures included, while everyone else doesn't
+	 * 
+	 * @param user
+	 *            to retrieve the count of pictures from
+	 * @return
+	 * @since 1.0.0
+	 */
+	@RequestMapping(value = "/{user}/count", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> latestPicturesMetaByUserLimit(@PathVariable("user") String user) {
+		BsonDocument query = new BsonDocument("user", new BsonString(user));
+				String curUser = UserUtil.getLoggedInUser();
+		if (!StringUtils.equals(curUser,user)) {
+			query.append("access",new BsonString(Access.PUBLIC.toString()));
+		}
+		return new ResponseEntity<>(format("{'count':%d}", factory.getCollection(Picture.class).count(query)),HttpStatus.OK);
 	}
 
 	/**
