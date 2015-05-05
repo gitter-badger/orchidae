@@ -149,7 +149,7 @@ public class PictureController {
 		if (!StringUtils.equals(curUser,user)) {
 			query.append("access",new BsonString(Access.PUBLIC.toString()));
 		}
-		return new ResponseEntity<>(format("{'count':%d}", factory.getCollection(Picture.class).count(query)),HttpStatus.OK);
+		return new ResponseEntity<>(format("{\"count\":%d}", factory.getCollection(Picture.class).count(query)),HttpStatus.OK);
 	}
 
 	/**
