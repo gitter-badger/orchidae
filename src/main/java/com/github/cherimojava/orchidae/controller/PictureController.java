@@ -109,23 +109,27 @@ public class PictureController {
 	 * @param user
 	 *            to retrieve pictures from
 	 * @param number
-	 *            number of pictures to ask for. Number is constrained by {@link #latestPictureLimit}
+	 *            (optional) number of pictures to ask for. Number is constrained by {@link #latestPictureLimit}
+	 *            @param skip number of pictures to skip. Must be non negativ
 	 * @return picture json list with the latest pictures
 	 * @since 1.0.0
 	 */
 	@RequestMapping(value = "/{user}/latest", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@PostFilter("@paa.hasAccess(filterObject.id)")
 	public List<Picture> latestPicturesMetaByUserLimit(@PathVariable("user") String user,
-			@RequestParam(value = "n", required = false) Integer number) {
+			@RequestParam(value = "n", required = false) Integer number, @RequestParam(value="s", required = false) Integer skip) {
 		if (number == null || number > latestPictureLimit) {
 			LOG.info("latest picture request was ({}) greater than max allowed {}. Only returning max", number,
 					latestPictureLimit);
 			number = latestPictureLimit;
 		}
 
-		MongoIterable<Picture> it = factory.getCollection(Picture.class).find(
+		FindIterable<Picture> it = factory.getCollection(Picture.class).find(
 				new BsonDocument("user", new BsonString(user)), Picture.class).limit(number).sort(
 				new Document("order", -1));
+		if (skip!=null && skip >0) {
+			it.skip(skip);
+		}
 		return Lists.newArrayList(it);
 	}
 

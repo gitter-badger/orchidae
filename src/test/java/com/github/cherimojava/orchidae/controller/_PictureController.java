@@ -210,10 +210,20 @@ public class _PictureController extends ControllerTestBase {
 	@Test
 	public void pictureOrdering() throws Exception {
 		createPicture("one", "png");
-		Thread.sleep(10);
 		createPicture("two", "jpg");
 		getLatest(10).andExpect(jsonPath("$[1].originalName", is("one.png"))).andExpect(
 				jsonPath("$[0].originalName", is("two.jpg")));
+	}
+
+	@Test
+	public void pictureSkipping() throws Exception {
+		createPicture("one", "png");
+		Thread.sleep(10);
+		createPicture("two", "jpg");
+		getLatest(1).andExpect(jsonPath("$[0].originalName", is("two.jpg")));
+		getLatest(1,1).andExpect(jsonPath("$[0].originalName", is("one.png")));
+		getLatest(10,-2).andExpect(jsonPath("$[1].originalName", is("one.png"))).andExpect(
+				jsonPath("$[0].originalName", is("two.jpg")));;//shouldn't throw an exception, simply fallback to default
 	}
 
 	@Test
@@ -249,7 +259,7 @@ public class _PictureController extends ControllerTestBase {
 	public void testAuthorizationDefined() throws NoSuchMethodException {
 		assertTrue(PictureController.class.getMethod("getPicture", String.class, String.class, String.class).isAnnotationPresent(
 				PreAuthorize.class));
-		assertTrue(PictureController.class.getMethod("latestPicturesMetaByUserLimit", String.class, Integer.class).isAnnotationPresent(
+		assertTrue(PictureController.class.getMethod("latestPicturesMetaByUserLimit", String.class, Integer.class, Integer.class).isAnnotationPresent(
 				PostFilter.class));
 		assertTrue(PictureController.class.getMethod("getPictureMeta", String.class, String.class).isAnnotationPresent(
 				PreAuthorize.class));
@@ -308,7 +318,15 @@ public class _PictureController extends ControllerTestBase {
 	}
 
 	private ResultActions getLatest(int count) throws Exception {
-		return mvc.perform(get(url("latest?n=" + count)).contentType(MediaType.APPLICATION_JSON)).andExpect(
+		return getLatest(count,-1);
+	}
+
+	private ResultActions getLatest(int count,int skip) throws Exception {
+		String query = "latest?n=" + count;
+		if (skip != -1) {
+			query = query + "&s="+skip;
+		}
+		return mvc.perform(get(url(query)).contentType(MediaType.APPLICATION_JSON)).andExpect(
 				status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON));
 	}
 
