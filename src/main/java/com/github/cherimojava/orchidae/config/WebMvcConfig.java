@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Properties;
 
+import com.google.common.base.Charsets;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,7 +104,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	@Override
 	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
 		converters.add(entityConverter(factory));
-		converters.add(new StringHttpMessageConverter());
+		converters.add(new StringHttpMessageConverter(Charsets.UTF_8));
 		converters.add(new ResourceHttpMessageConverter());
 		// converters.add(new ByteArrayHttpMessageConverter());
 		super.configureMessageConverters(converters);
