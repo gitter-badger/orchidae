@@ -1,5 +1,16 @@
 <div ng-controller="PhotostreamController">
+    <span class="photostream-pagination">
+        <pagination total-items="totalItems" max-size="maxSize" items-per-page="numPerPage" class="pagination-sm"
+                    boundary-links="true" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;"
+                    last-text="&raquo;" ng-model="currentPage"/></span>
+
     <div ng-repeat="photo in photos" class="photostream">
         <img ng-src="picture/admin/{{photo._id}}?f=s"/>
     </div>
+
+    <span class="photostream-pagination">
+        <pagination total-items="totalItems" max-size="maxSize" items-per-page="numPerPage" class="pagination-sm"
+                    boundary-links="true" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;"
+                    last-text="&raquo;" ng-model="currentPage"/></span>
+
 </div>

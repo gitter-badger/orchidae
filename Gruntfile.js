@@ -79,7 +79,7 @@ module.exports = function (grunt) {
 					{//angular bootstrap
 						expand: true,
 						cwd: bowerDir + 'angular-bootstrap',
-						src: ['ui-bootstrap.min.js'],
+						src: ['ui-bootstrap.min.js','ui-bootstrap-tpls.min.js'],
 						dest: jsDir
 					},
 					{//flag icons

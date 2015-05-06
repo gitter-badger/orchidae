@@ -36,3 +36,9 @@ div.photostream {
 div.photostream img {
     margin-top:3px;
 }
+
+span.photostream-pagination {
+    width: 100%;
+    text-align: center;
+    float: right !important;
+}
