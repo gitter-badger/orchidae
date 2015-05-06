@@ -26,7 +26,6 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import com.mongodb.client.FindIterable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -65,7 +64,7 @@ import com.github.cherimojava.orchidae.util.FileUtil;
 import com.github.cherimojava.orchidae.util.UserUtil;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.mongodb.client.MongoIterable;
+import com.mongodb.client.FindIterable;
 
 /**
  * Does the handling of uploading and serving pictures
@@ -110,14 +109,16 @@ public class PictureController {
 	 *            to retrieve pictures from
 	 * @param number
 	 *            (optional) number of pictures to ask for. Number is constrained by {@link #latestPictureLimit}
-	 *            @param skip number of pictures to skip. Must be non negativ
+	 * @param skip
+	 *            number of pictures to skip. Must be non negativ
 	 * @return picture json list with the latest pictures
 	 * @since 1.0.0
 	 */
 	@RequestMapping(value = "/{user}/latest", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@PostFilter("@paa.hasAccess(filterObject.id)")
 	public List<Picture> latestPicturesMetaByUserLimit(@PathVariable("user") String user,
-			@RequestParam(value = "n", required = false) Integer number, @RequestParam(value="s", required = false) Integer skip) {
+			@RequestParam(value = "n", required = false) Integer number,
+			@RequestParam(value = "s", required = false) Integer skip) {
 		if (number == null || number > latestPictureLimit) {
 			LOG.info("latest picture request was ({}) greater than max allowed {}. Only returning max", number,
 					latestPictureLimit);
@@ -127,7 +128,7 @@ public class PictureController {
 		FindIterable<Picture> it = factory.getCollection(Picture.class).find(
 				new BsonDocument("user", new BsonString(user)), Picture.class).limit(number).sort(
 				new Document("order", -1));
-		if (skip!=null && skip >0) {
+		if (skip != null && skip > 0) {
 			it.skip(skip);
 		}
 		return Lists.newArrayList(it);
@@ -145,11 +146,12 @@ public class PictureController {
 	@RequestMapping(value = "/{user}/count", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> latestPicturesMetaByUserLimit(@PathVariable("user") String user) {
 		BsonDocument query = new BsonDocument("user", new BsonString(user));
-				String curUser = UserUtil.getLoggedInUser();
-		if (!StringUtils.equals(curUser,user)) {
-			query.append("access",new BsonString(Access.PUBLIC.toString()));
+		String curUser = UserUtil.getLoggedInUser();
+		if (!StringUtils.equals(curUser, user)) {
+			query.append("access", new BsonString(Access.PUBLIC.toString()));
 		}
-		return new ResponseEntity<>(format("{\"count\":%d}", factory.getCollection(Picture.class).count(query)),HttpStatus.OK);
+		return new ResponseEntity<>(format("{\"count\":%d}", factory.getCollection(Picture.class).count(query)),
+				HttpStatus.OK);
 	}
 
 	/**

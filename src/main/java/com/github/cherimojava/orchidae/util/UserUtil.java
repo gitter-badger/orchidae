@@ -22,6 +22,7 @@ import javax.annotation.PreDestroy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.github.cherimojava.data.mongo.entity.Entity;
@@ -55,7 +56,7 @@ public class UserUtil {
 				new RemovalListener() {
 					@Override
 					public void onRemoval(RemovalNotification notification) {
-						// save user before exit
+						// save user before dropped from cache
 						if (notification.getValue() != null) {
 							((Entity) notification.getValue()).save();
 						}

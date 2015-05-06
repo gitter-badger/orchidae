@@ -60,6 +60,7 @@ public class Starter {
 		// set the Production profile to be active
 		context.getEnvironment().setDefaultProfiles(RootConfig.PROFILE_PRODUCTION);
 		context.register(RootConfig.class, WebMvcConfig.class);
+		context.registerShutdownHook();
 		return context;
 	}
 
