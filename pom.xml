@@ -15,7 +15,7 @@
     </parent>
 
     <properties>
-        <java.version>1.7</java.version>
+        <java.version>1.8</java.version>
         <cherimojava.version>1.0.0-SNAPSHOT</cherimojava.version>
         <mongodb.version>3.0.0</mongodb.version>
         <log4j2.version>2.2</log4j2.version>
