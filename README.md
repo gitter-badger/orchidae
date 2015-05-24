@@ -15,6 +15,7 @@ One the application is running you can use it under `localhost:8082`, for the fi
 
 ```
 npm install
+npm install protractor
 bower install
 grunt
 ```
