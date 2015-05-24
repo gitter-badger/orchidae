@@ -7,18 +7,8 @@ to run orchidae simply call on the commandline `mvn exec:java` or start the `Sta
 
 To peek into the jar created: `jar tvf target/orchidae-1.0-SNAPSHOT.jar`
 
+To run the application please simply call run.sh to install all required non maven dependencies.
 One the application is running you can use it under `localhost:8082`, for the first time you need to login/register a user, which you can later on use to login.
-
-3rd party libs
-====
-3rd party js stuff is installed through bower and grunt. To setup both please run
-
-```
-npm install
-npm install protractor
-bower install
-grunt
-```
 
 
 Powered with
