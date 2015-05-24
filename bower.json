@@ -10,7 +10,8 @@
     "bootstrap": "3.3.4",
     "jquery-i18n-properties": "1.1.0",
     "flag-icon-css": "0.7.0",
-    "dropzone": "4.0.1"
+    "dropzone": "4.0.1",
+    "fontawesome": "~4.3.0"
   },
   "private": true
 }

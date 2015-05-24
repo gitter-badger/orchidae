@@ -11,7 +11,8 @@ module.exports = function (grunt) {
 		distDir = 'webapp/resources/dist/',
 		cssDir= distDir + "css",
 		jsDir = distDir + "js",
-		imgDir = distDir + "img";
+		imgDir = distDir + "img",
+		fontDir = distDir + "fonts";
 
 
     // Project configuration.
@@ -111,6 +112,18 @@ module.exports = function (grunt) {
 						cwd: bowerDir + 'dropzone/dist',
 						src: ['dropzone.css', 'basic.css'],
 						dest: cssDir
+					},
+					{//fontawesome
+						expand: true,
+						cwd: bowerDir + 'fontawesome/css',
+						src: ['font-awesome.min.css', 'font-awesome.css.map'],
+						dest: cssDir
+					},
+					{//fontawesome
+						expand: true,
+						cwd: bowerDir + 'fontawesome/fonts',
+						src: ['**'],
+						dest: fontDir
 					}
 					]
 			}

@@ -42,3 +42,12 @@ span.photostream-pagination {
     text-align: center;
     float: right !important;
 }
+
+div.picture-detail-body, div.picture-detail-footer, div.picture-detail-header {
+    margin:0px;
+}
+
+div.picture-detail-body img {
+    width: 100%;
+    height: 100%;
+}

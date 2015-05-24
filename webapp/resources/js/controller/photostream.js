@@ -9,7 +9,7 @@
   };
 
   orchidae.controller('PhotostreamController', function($scope, $rootScope,
-          $http) {
+          $modal, $http) {
     $scope.photos = [];
     $scope.totalItems = 0;
     $scope.numPerPage = 200;
@@ -30,5 +30,25 @@
         $scope.photos = root;
       })
     });
+
+    $scope.open = function(photo_id) {
+      var modalInstance = $modal.open({
+        animation: true,
+        templateUrl: 'myModalContent.html',
+        controller: 'ModalInstanceCtrl',
+        size: 'lg',
+        resolve: {
+          photo: function() {
+            return photo_id;
+          }
+        }
+      });
+    };
+  });
+
+  orchidae.controller('ModalInstanceCtrl', function($scope, $modalInstance,
+          photo) {
+
+    $scope.photo = photo;
   });
 }());

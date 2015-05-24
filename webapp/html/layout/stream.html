@@ -1,3 +1,31 @@
+<script type="text/ng-template" id="myModalContent.html">
+    <div class="modal-header picture-detail-header">
+        <h3 class="modal-title">{{photo.title}}</h3>
+    </div>
+    <div class="modal-body picture-detail-body">
+        <img ng-src="picture/admin/{{photo._id}}?f=o"/>
+    </div>
+    <div class="modal-footer picture-detail-footer">
+        <i class="fa fa-unlock" ng-hide="photo.access == 'PRIVATE'">
+            <msg key="pictureDetail.unlock"/>
+        </i>
+        <i class="fa fa-lock" ng-show=" photo.access == 'PRIVATE'">
+            <msg key="pictureDetail.lock"/>
+        </i>
+        <i class="fa fa-trash">
+            <msg key="pictureDetail.delete"/>
+        </i>
+        <i class="fa fa-folder">
+            <msg key="pictureDetail.albums"/>
+        </i>
+        <i class="fa fa-tags">
+            <msg key="pictureDetail.tags"/>
+        </i>
+        <i class="fa fa-comments-o">
+            <msg key="pictureDetail.comments"/>
+        </i>
+    </div>
+</script>
 <div ng-controller="PhotostreamController">
     <span class="photostream-pagination">
         <pagination total-items="totalItems" max-size="maxSize" items-per-page="numPerPage" class="pagination-sm"
@@ -5,7 +33,7 @@
                     last-text="&raquo;" ng-model="currentPage"/></span>
 
     <div ng-repeat="photo in photos" class="photostream">
-        <img ng-src="picture/admin/{{photo._id}}?f=s"/>
+        <img ng-src="picture/admin/{{photo._id}}?f=s" ng-click="open(photo)"/>
     </div>
 
     <span class="photostream-pagination">
