@@ -11,6 +11,7 @@
 
     <artifactId>server</artifactId>
     <description>The Orchidae Picture Server</description>
+    <url>http://github.com/cherimojava/orchidae</url>
 
 
     <dependencies>
