@@ -11,6 +11,7 @@
     <url>http://github.com/cherimojava/orchidae</url>
 
     <artifactId>ui</artifactId>
+    <name>Orchidae - default web UI</name>
     <description>Default web-frontend for orchidae</description>
 
 

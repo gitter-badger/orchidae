@@ -15,6 +15,8 @@
  */
 package com.github.cherimojava.orchidae.config;
 
+import com.github.cherimojava.orchidae.hook.HookHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -24,8 +26,10 @@ import org.springframework.context.annotation.Import;
  * @author philnate
  */
 @Configuration
-@Import({ Controllers.class, WebMvcConfig.class, cfgMongo.class, cfgSecurity.class })
+@Import({ Controllers.class, WebMvcConfig.class, cfgMongo.class, cfgSecurity.class, cfgHooks.class })
 public class RootConfig {
+	@Autowired
+	private HookHandler handler;
 	// config needed for production
 	public static final String PROFILE_PRODUCTION = "production";
 	// config needed for testing

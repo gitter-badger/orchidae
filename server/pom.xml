@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>server</artifactId>
+    <name>Orchidae - Server</name>
     <description>The Orchidae Picture Server</description>
     <url>http://github.com/cherimojava/orchidae</url>
 
@@ -181,6 +182,12 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+        </dependency>
+        <!--classpath scanner-->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.8</version>
         </dependency>
     </dependencies>
 
