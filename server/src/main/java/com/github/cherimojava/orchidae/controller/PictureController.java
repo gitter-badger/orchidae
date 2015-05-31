@@ -55,11 +55,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.github.cherimojava.data.mongo.entity.EntityFactory;
-import com.github.cherimojava.orchidae.controller.api.UploadResponse;
 import com.github.cherimojava.orchidae.api.entities.Access;
 import com.github.cherimojava.orchidae.api.entities.BatchUpload;
 import com.github.cherimojava.orchidae.api.entities.Picture;
 import com.github.cherimojava.orchidae.api.entities.User;
+import com.github.cherimojava.orchidae.api.hook.UploadHook;
+import com.github.cherimojava.orchidae.controller.api.UploadResponse;
+import com.github.cherimojava.orchidae.hook.HookHandler;
 import com.github.cherimojava.orchidae.util.FileUtil;
 import com.github.cherimojava.orchidae.util.UserUtil;
 import com.google.common.base.Joiner;
@@ -94,6 +96,9 @@ public class PictureController {
 
 	@Autowired
 	UserUtil userUtil;
+
+	@Autowired
+	private HookHandler hookHandler;
 
 	/**
 	 * identifier on clientside for batch
@@ -269,32 +274,32 @@ public class PictureController {
 		User user = userUtil.getUser((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 		for (Iterator<String> it = request.getFileNames(); it.hasNext();) {
 			MultipartFile file = request.getFile(it.next());
-			// Create uuid and Picture entity
-			Picture picture = factory.create(Picture.class);
-			picture.setUser(user);
-			picture.setTitle(StringUtils.split(file.getOriginalFilename(), ".")[0]);
-			picture.setId(generateId());
-			picture.setOriginalName(file.getOriginalFilename());
-			picture.setUploadDate(DateTime.now());
-			picture.setOrder(user.getPictureCount().incrementAndGet());
 
-			String type = StringUtils.substringAfterLast(file.getOriginalFilename(), ".");
+            String type = StringUtils.substringAfterLast(file.getOriginalFilename(), ".");
 
-			try {
-				File storedPicture = fileUtil.getFileHandle(picture.getId());
-				// save picture
+            try {
+                // Create uuid and Picture entity
+                Picture picture = EntityFactory.instantiate(Picture.class);
+                picture.setId(generateId());
+
+                // save picture
+                File storedPicture = fileUtil.getFileHandle(picture.getId());
 				file.transferTo(storedPicture);
 
-				// read some some properties from it
-				BufferedImage image = ImageIO.read(storedPicture);
-				picture.setHeight(image.getHeight());
-				picture.setWidth(image.getWidth());
-				picture.setAccess(Access.PRIVATE);// TODO for now only private access
+                BufferedImage image = ImageIO.read(FileUtils.openInputStream(storedPicture));
+
+                //Call all hooks
+                for (UploadHook hook : hookHandler.getHook(UploadHook.class)) {
+                    hook.upload(picture, user, file,image);
+                }
+
+                //todo, would be good if this could be moved into hook as well
 				createSmall(picture.getId(), image, type);
-				LOG.info("Uploaded {} and assigned id {}", file.getOriginalFilename(), picture.getId());
 				checkBatch(picture, batchId);
-				picture.save();
-				// after the picture is saved we can add it to the response
+                //save picture
+                factory.save(picture);
+                LOG.info("Uploaded {} and assigned id {}", file.getOriginalFilename(), picture.getId());
+                // after the picture is saved we can add it to the response
 				response.addIds(picture.getId());
 			} catch (Exception e) {
 				LOG.warn("failed to store picture", e);
@@ -312,7 +317,7 @@ public class PictureController {
 	}
 
 	/**
-	 * check if batching should applied to the current picture upload
+	 * check if batching should be applied to the current picture upload
 	 * 
 	 * @param pic
 	 * @param batchId

@@ -15,9 +15,12 @@
  */
 package com.github.cherimojava.orchidae.api.hook;
 
+import java.awt.image.BufferedImage;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import com.github.cherimojava.orchidae.api.entities.Picture;
+import com.github.cherimojava.orchidae.api.entities.User;
 
 /**
  * hook being called during upload of a picture
@@ -31,8 +34,14 @@ public interface UploadHook extends Hook {
 	 * this hook is called after the picture object has been created, but not yet saved. File being uploaded is provided
 	 * as MultipartFile for further usage
 	 * 
-	 * @param uploaded
+	 * @param newPicture
+	 *            picture uploaded
+	 * @param user
+	 *            user uploading the picture
 	 * @param file
+	 *            file(picture uploaded
+	 * @param image
+	 *            BufferedImage stored file
 	 */
-	public void upload(Picture uploaded, MultipartFile file);
+	public void upload(Picture newPicture, User user, MultipartFile file, BufferedImage image);
 }

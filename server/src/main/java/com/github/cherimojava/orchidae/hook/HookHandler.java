@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 import org.reflections.Configuration;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 
 import com.github.cherimojava.orchidae.api.hook.Hook;
@@ -64,21 +65,23 @@ public class HookHandler {
 	}
 
 	/**
-	 * Returns
+	 * Returns all hooks for the given hook Interface
 	 * 
 	 * @param hook
 	 * @return
 	 */
-	public SortedSet<Hook> getHook(Class<? extends Hook> hook) {
-		return hooks.containsKey(hook) ? hooks.get(hook) : EMPTY_SET;
+	public <T extends Hook> SortedSet<T> getHook(Class<T> hook) {
+		return (SortedSet<T>) (hooks.containsKey(hook) ? hooks.get(hook) : EMPTY_SET);
 	}
 
 	public static <H extends Hook, C extends Class<H>> SortedSet<Hook> getHookOrdering(C hook, URL url) {
-		Configuration config = new ConfigurationBuilder().addUrls(url).setScanners(new SubTypesScanner());
+		Configuration config = new ConfigurationBuilder().addUrls(url).addUrls(ClasspathHelper.forPackage(HookHandler.class.getPackage().getName())).setScanners(new SubTypesScanner());
 		Reflections reflect = new Reflections(config);
 		SortedSet<Hook> hooks = Sets.newTreeSet(new ReverseComparator(comparator));
+		LOG.info("Searching for hooks of {}",hook);
 		for (Class<? extends H> c : reflect.getSubTypesOf(hook)) {
 			try {
+				LOG.info("Found hook {}", c);
 				hooks.add(c.newInstance());
 			} catch (IllegalAccessException | InstantiationException e) {
 				LOG.error("Failed to instantiate {} please make sure it has a no param Constructor. {}", c, e);
