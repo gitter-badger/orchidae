@@ -18,6 +18,7 @@ package com.github.cherimojava.orchidae.controller;
 import static org.junit.Assert.assertThat;
 
 import com.github.cherimojava.orchidae.SpringTestBase;
+import com.github.cherimojava.orchidae.config.cfgHooks;
 import org.hamcrest.Matcher;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -30,7 +31,7 @@ import com.github.cherimojava.orchidae.config.WebMvcConfig;
 import com.github.cherimojava.orchidae.config.cfgMongo;
 import com.google.common.base.Joiner;
 
-@ContextHierarchy(@ContextConfiguration(classes = { WebMvcConfig.class }))
+@ContextHierarchy(@ContextConfiguration(classes = { WebMvcConfig.class, cfgHooks.class }))
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ControllerTestBase extends SpringTestBase {

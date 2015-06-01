@@ -15,17 +15,11 @@
  */
 package com.github.cherimojava.orchidae.hook;
 
-import java.awt.image.BufferedImage;
-
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.github.cherimojava.orchidae.api.entities.Access;
 import com.github.cherimojava.orchidae.api.entities.Picture;
-import com.github.cherimojava.orchidae.api.entities.User;
 import com.github.cherimojava.orchidae.api.hook.Order;
 import com.github.cherimojava.orchidae.api.hook.UploadHook;
 
@@ -40,16 +34,16 @@ import com.github.cherimojava.orchidae.api.hook.UploadHook;
 public class BasePictureInformationUploadHook implements UploadHook {
 
 	@Override
-	public void upload(Picture newPicture, User user, MultipartFile file, BufferedImage image) {
-		newPicture.setUser(user);
-		newPicture.setTitle(StringUtils.split(file.getOriginalFilename(), ".")[0]);
-		newPicture.setOriginalName(file.getOriginalFilename());
-		newPicture.setUploadDate(DateTime.now());
-		newPicture.setOrder(user.getPictureCount().incrementAndGet());
-		newPicture.setAccess(Access.PRIVATE);// TODO for now only private access
-
+	public void upload(UploadInfo ui) {
+		Picture picture = ui.pictureUploaded;
+		picture.setUser(ui.uploadingUser);
+		picture.setTitle(StringUtils.split(ui.uploadedFile.getOriginalFilename(), ".")[0]);
+		picture.setOriginalName(ui.uploadedFile.getOriginalFilename());
+		picture.setUploadDate(DateTime.now());
+		picture.setOrder(ui.uploadingUser.getPictureCount().incrementAndGet());
+		picture.setAccess(Access.PRIVATE);// TODO for now only private access
 		// read some some properties from picture
-		newPicture.setHeight(image.getHeight());
-		newPicture.setWidth(image.getWidth());
+		picture.setHeight(ui.storedImage.getHeight());
+		picture.setWidth(ui.storedImage.getWidth());
 	}
 }

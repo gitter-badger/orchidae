@@ -48,7 +48,7 @@ public class _HookHandler extends TestBase {
 		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(cfgHooks.class);
 		HookHandler handler = ctx.getBean(HookHandler.class);
 		assertEquals(0, handler.getHook(Hook.class).size());
-		assertEquals(0, handler.getHook(UploadHook.class).size());
+		assertEquals(1, handler.getHook(UploadHook.class).size());
 	}
 
 	private static interface TestHook extends Hook {

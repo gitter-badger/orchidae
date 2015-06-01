@@ -37,6 +37,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.imageio.ImageIO;
 
+import com.github.cherimojava.orchidae.hook.HookHandler;
 import org.bson.Document;
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -90,6 +91,9 @@ public class _PictureController extends ControllerTestBase {
 	@Autowired
 	UserUtil userUtil;
 
+	@Autowired
+	HookHandler hookHandler;
+
 	private MockHttpSession session;
 
 	PictureController controller;
@@ -101,6 +105,7 @@ public class _PictureController extends ControllerTestBase {
 		controller.factory = factory;
 		controller.fileUtil = fileUtil;
 		controller.latestPictureLimit = 10;
+		controller.hookHandler = hookHandler;
 
 		mvc = MockMvcBuilders.standaloneSetup(controller).setMessageConverters(new EntityConverter(factory),
 				new StringHttpMessageConverter(), new ResourceHttpMessageConverter()).build();

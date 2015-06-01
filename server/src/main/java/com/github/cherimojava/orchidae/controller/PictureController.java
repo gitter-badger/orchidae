@@ -98,7 +98,7 @@ public class PictureController {
 	UserUtil userUtil;
 
 	@Autowired
-	private HookHandler hookHandler;
+    protected HookHandler hookHandler;
 
 	/**
 	 * identifier on clientside for batch
@@ -289,8 +289,13 @@ public class PictureController {
                 BufferedImage image = ImageIO.read(FileUtils.openInputStream(storedPicture));
 
                 //Call all hooks
+                UploadHook.UploadInfo ui = new UploadHook.UploadInfo();
+                ui.pictureUploaded = picture;
+                ui.uploadedFile = file;
+                ui.uploadingUser=user;
+                ui.storedImage =image;
                 for (UploadHook hook : hookHandler.getHook(UploadHook.class)) {
-                    hook.upload(picture, user, file,image);
+                    hook.upload(ui);
                 }
 
                 //todo, would be good if this could be moved into hook as well

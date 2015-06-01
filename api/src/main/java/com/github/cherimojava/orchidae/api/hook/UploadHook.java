@@ -34,14 +34,26 @@ public interface UploadHook extends Hook {
 	 * this hook is called after the picture object has been created, but not yet saved. File being uploaded is provided
 	 * as MultipartFile for further usage
 	 * 
-	 * @param newPicture
-	 *            picture uploaded
-	 * @param user
-	 *            user uploading the picture
-	 * @param file
-	 *            file(picture uploaded
-	 * @param image
-	 *            BufferedImage stored file
+	 *@param ui information container of picture Upload
 	 */
-	public void upload(Picture newPicture, User user, MultipartFile file, BufferedImage image);
+	public void upload(UploadInfo ui);
+
+    public static class UploadInfo {
+        /**
+         * picture uploaded
+         */
+        public Picture pictureUploaded;
+        /**
+         * user uploading the picture
+         */
+        public User uploadingUser;
+        /**
+         * file uploaded
+         */
+        public MultipartFile uploadedFile;
+        /**
+         * actually stored picture
+         */
+        public BufferedImage storedImage;
+    }
 }
