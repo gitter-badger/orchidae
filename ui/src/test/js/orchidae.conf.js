@@ -80,7 +80,7 @@ exports.config = {
   // Jasmine is fully supported as a test and assertion framework.
   // Mocha has limited beta support. You will need to include your own
   // assertion framework if working with mocha.
-  framework: 'jasmine',
+  framework: 'jasmine2',
 
   // ----- Options to be passed to minijasminenode -----
   //
@@ -96,14 +96,6 @@ exports.config = {
     includeStackTrace: true,
     // Default time to wait in ms before a test fails.
     defaultTimeoutInterval: 30000
-  },
-
-  // ----- Options to be passed to mocha -----
-  //
-  // See the full list at http://visionmedia.github.io/mocha/
-  mochaOpts: {
-    ui: 'bdd',
-    reporter: 'list'
   },
 
   // ----- The cleanup step -----
