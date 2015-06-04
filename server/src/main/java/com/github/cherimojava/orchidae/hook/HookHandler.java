@@ -46,8 +46,8 @@ public class HookHandler {
 
 	private static Logger LOG = LogManager.getLogger();
 	private static final HookComparator comparator = new HookComparator();
-	private Map<Class<? extends Hook>, SortedSet<Hook>> hooks;
-	private static final SortedSet<Hook> EMPTY_SET = ImmutableSortedSet.of();
+	private Map<Class<?>, SortedSet> hooks;
+	private static final SortedSet EMPTY_SET = ImmutableSortedSet.of();
 
 	/**
 	 * creates a new HookHandler containing all Hooks found
@@ -58,8 +58,8 @@ public class HookHandler {
 	public HookHandler(Configuration config, URL pluginURL) {
 		hooks = Maps.newHashMap();
 		Reflections r = new Reflections(config);
-		Set<Class<? extends Hook>> hookTypes = r.getSubTypesOf(Hook.class);
-		for (Class<? extends Hook> c : hookTypes) {
+		Set<Class<?>> hookTypes = r.getTypesAnnotatedWith(Hook.class);
+		for (Class<?> c : hookTypes) {
 			hooks.put(c, ImmutableSortedSet.copyOf(HookHandler.getHookOrdering(c, pluginURL)));
 		}
 	}
@@ -70,15 +70,16 @@ public class HookHandler {
 	 * @param hook
 	 * @return
 	 */
-	public <T extends Hook> SortedSet<T> getHook(Class<T> hook) {
+	public <T> SortedSet<T> getHook(Class<T> hook) {
 		return (SortedSet<T>) (hooks.containsKey(hook) ? hooks.get(hook) : EMPTY_SET);
 	}
 
-	public static <H extends Hook, C extends Class<H>> SortedSet<Hook> getHookOrdering(C hook, URL url) {
-		Configuration config = new ConfigurationBuilder().addUrls(url).addUrls(ClasspathHelper.forPackage(HookHandler.class.getPackage().getName())).setScanners(new SubTypesScanner());
+	public static <H, C extends Class<H>> SortedSet<H> getHookOrdering(C hook, URL url) {
+		Configuration config = new ConfigurationBuilder().addUrls(url).addUrls(
+				ClasspathHelper.forPackage(HookHandler.class.getPackage().getName())).setScanners(new SubTypesScanner());
 		Reflections reflect = new Reflections(config);
-		SortedSet<Hook> hooks = Sets.newTreeSet(new ReverseComparator(comparator));
-		LOG.info("Searching for hooks of {}",hook);
+		SortedSet<H> hooks = Sets.newTreeSet(new ReverseComparator(comparator));
+		LOG.info("Searching for hooks of {}", hook);
 		for (Class<? extends H> c : reflect.getSubTypesOf(hook)) {
 			try {
 				LOG.info("Found hook {}", c);
@@ -103,9 +104,9 @@ public class HookHandler {
 	 * @author philnate
 	 * @since 1.0.0
 	 */
-	protected static class HookComparator implements Comparator<Hook> {
+	protected static class HookComparator implements Comparator<Object> {
 		@Override
-		public int compare(Hook o1, Hook o2) {
+		public int compare(Object o1, Object o2) {
 			boolean b1 = o1.getClass().isAnnotationPresent(Order.class);
 			boolean b2 = o2.getClass().isAnnotationPresent(Order.class);
 			if (!b1 && !b2) {

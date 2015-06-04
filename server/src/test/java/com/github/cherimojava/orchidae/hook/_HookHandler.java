@@ -51,7 +51,8 @@ public class _HookHandler extends TestBase {
 		assertEquals(1, handler.getHook(UploadHook.class).size());
 	}
 
-	private static interface TestHook extends Hook {
+	@Hook
+	private static interface TestHook {
 	}
 
 	@Order(order = 1, category = Order.Category.SYSTEM)

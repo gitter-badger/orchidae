@@ -15,10 +15,18 @@
  */
 package com.github.cherimojava.orchidae.api.hook;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * Just some indicator interface to ease work with hooks. All hook interfaces inherit from this one
+ * 
  * @author philnate
  * @since 1.0.0
  */
-public interface Hook {
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Hook {
 }
