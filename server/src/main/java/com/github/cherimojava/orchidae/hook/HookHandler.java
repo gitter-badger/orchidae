@@ -70,11 +70,36 @@ public class HookHandler {
 	 * @param hook
 	 * @return
 	 */
-	public <T> SortedSet<T> getHook(Class<T> hook) {
+	protected <T> SortedSet<T> getHook(Class<T> hook) {
 		return (SortedSet<T>) (hooks.containsKey(hook) ? hooks.get(hook) : EMPTY_SET);
 	}
 
-	public static <H, C extends Class<H>> SortedSet<H> getHookOrdering(C hook, URL url) {
+	/**
+	 * Entry point into calling hooks, allowing to configure the invocation of those hooks
+	 * 
+	 * @param hook
+	 *            to be called
+	 * @param <H>
+	 *            Hook type
+	 * @return HookExecutor allowing to configure hook invocation
+	 */
+	public <H> HookExecutor<H> callHook(Class<H> hook) {
+		return new HookExecutor<>(hook, getHook(hook));
+	}
+
+	/**
+	 * creates a sortedset of all hook implementations found for the given hook. Ordering is done through
+	 * {@link com.github.cherimojava.orchidae.hook.HookHandler.HookComparator} in reverse order
+	 * 
+	 * @param hook
+	 *            to find all implementations from
+	 * @param url
+	 *            where to search for hook implementations
+	 * @param <H>
+	 *            Hook type
+	 * @return sortedset with all found hook implementation
+	 */
+	public static <H> SortedSet<H> getHookOrdering(Class<H> hook, URL url) {
 		Configuration config = new ConfigurationBuilder().addUrls(url).addUrls(
 				ClasspathHelper.forPackage(HookHandler.class.getPackage().getName())).setScanners(new SubTypesScanner());
 		Reflections reflect = new Reflections(config);

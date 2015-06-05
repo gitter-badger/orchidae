@@ -98,7 +98,7 @@ public class PictureController {
 	UserUtil userUtil;
 
 	@Autowired
-    protected HookHandler hookHandler;
+	protected HookHandler hookHandler;
 
 	/**
 	 * identifier on clientside for batch
@@ -275,36 +275,35 @@ public class PictureController {
 		for (Iterator<String> it = request.getFileNames(); it.hasNext();) {
 			MultipartFile file = request.getFile(it.next());
 
-            String type = StringUtils.substringAfterLast(file.getOriginalFilename(), ".");
+			String type = StringUtils.substringAfterLast(file.getOriginalFilename(), ".");
 
-            try {
-                // Create uuid and Picture entity
-                Picture picture = EntityFactory.instantiate(Picture.class);
-                picture.setId(generateId());
+			try {
+				// Create uuid and Picture entity
+				Picture picture = EntityFactory.instantiate(Picture.class);
+				picture.setId(generateId());
 
-                // save picture
-                File storedPicture = fileUtil.getFileHandle(picture.getId());
+				// save picture
+				File storedPicture = fileUtil.getFileHandle(picture.getId());
 				file.transferTo(storedPicture);
 
-                BufferedImage image = ImageIO.read(FileUtils.openInputStream(storedPicture));
+				BufferedImage image = ImageIO.read(FileUtils.openInputStream(storedPicture));
 
-                //Call all hooks
-                UploadHook.UploadInfo ui = new UploadHook.UploadInfo();
-                ui.pictureUploaded = picture;
-                ui.uploadedFile = file;
-                ui.uploadingUser=user;
-                ui.storedImage =image;
-                for (UploadHook hook : hookHandler.getHook(UploadHook.class)) {
-                    hook.upload(ui);
-                }
+				// Call all hooks
+				UploadHook.UploadInfo ui = new UploadHook.UploadInfo();
+				ui.pictureUploaded = picture;
+				ui.uploadedFile = file;
+				ui.uploadingUser = user;
+				ui.storedImage = image;
 
-                //todo, would be good if this could be moved into hook as well
+				hookHandler.callHook(UploadHook.class).callAll().upload(ui);
+
+				// todo, would be good if this could be moved into hook as well
 				createSmall(picture.getId(), image, type);
 				checkBatch(picture, batchId);
-                //save picture
-                factory.save(picture);
-                LOG.info("Uploaded {} and assigned id {}", file.getOriginalFilename(), picture.getId());
-                // after the picture is saved we can add it to the response
+				// save picture
+				factory.save(picture);
+				LOG.info("Uploaded {} and assigned id {}", file.getOriginalFilename(), picture.getId());
+				// after the picture is saved we can add it to the response
 				response.addIds(picture.getId());
 			} catch (Exception e) {
 				LOG.warn("failed to store picture", e);
