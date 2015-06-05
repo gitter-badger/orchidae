@@ -75,40 +75,48 @@ public class _HookComparator extends TestBase {
 	}
 
 	@Order()
-	private static class DefaultOrder implements Hook {
+	@Hook
+	private static class DefaultOrder {
 		// just some empty order should give it higher priority
 	}
 
-	private static class NoOrder implements Hook {
+	@Hook
+	private static class NoOrder {
 
 	}
 
 	@Order(category = Order.Category.SYSTEM)
-	private static class System implements Hook {
+	@Hook
+	private static class System {
 
 	}
 
 	@Order(category = Order.Category.CUSTOM)
-	private static class Custom implements Hook {
+	@Hook
+	private static class Custom {
 	}
 
 	@Order(category = Order.Category.SYSTEM, order = 1)
-	private static class One implements Hook {
+	@Hook
+	private static class One {
 
 	}
 
 	@Order(category = Order.Category.SYSTEM, order = 0)
-	private static class Two implements Hook {
+	@Hook
+	private static class Two {
 
 	}
 
 	@Order(category = Order.Category.SYSTEM, order = 1)
-	private static class A implements Hook {
+	@Hook
+	private static class A {
 
 	}
 
 	@Order(category = Order.Category.SYSTEM, order = 1)
-	private static class B implements Hook {
+	@Hook
+	private static class B {
 
 	}
 }

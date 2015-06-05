@@ -19,7 +19,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.springframework.context.annotation.Bean;
@@ -43,9 +43,8 @@ public class cfgHooks {
 
 	@Bean
 	public org.reflections.Configuration config() {
-		org.reflections.Configuration config = new ConfigurationBuilder().setScanners(new SubTypesScanner()).setUrls(
+		return new ConfigurationBuilder().setScanners(new TypeAnnotationsScanner()).setUrls(
 				ClasspathHelper.forPackage(Hook.class.getPackage().getName()));
-		return config;
 	}
 
 	@Bean

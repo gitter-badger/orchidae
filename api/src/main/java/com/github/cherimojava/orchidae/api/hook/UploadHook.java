@@ -28,7 +28,8 @@ import com.github.cherimojava.orchidae.api.entities.User;
  * @author philnate
  * @since 1.0.0
  */
-public interface UploadHook extends Hook {
+@Hook
+public interface UploadHook {
 
 	/**
 	 * this hook is called after the picture object has been created, but not yet saved. File being uploaded is provided

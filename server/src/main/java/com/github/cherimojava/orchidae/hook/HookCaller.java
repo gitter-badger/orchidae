@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.cherimojava.orchidae.api.hook;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package com.github.cherimojava.orchidae.hook;
 
 /**
- * Just some indicator interface to ease work with hooks. All hook interfaces inherit from this one
+ * interface for Hook call handling, dynamic proxy
  * 
  * @author philnate
+ * @param <H> Hook being stubbed here
  * @since 1.0.0
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Hook {
+public interface HookCaller<H> {
+	/**
+	 * Call all hook implementations associated to the given Hook
+	 * @param arg
+	 *            hook parameter handed to each hook called
+	 * @return number of hooks called
+	 */
+	public H callAll();
 }

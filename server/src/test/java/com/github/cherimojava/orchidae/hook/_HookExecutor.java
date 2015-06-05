@@ -17,53 +17,63 @@ package com.github.cherimojava.orchidae.hook;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.util.Iterator;
-import java.util.Set;
-
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.github.cherimojava.orchidae.TestBase;
 import com.github.cherimojava.orchidae.api.hook.Hook;
 import com.github.cherimojava.orchidae.api.hook.Order;
-import com.github.cherimojava.orchidae.api.hook.UploadHook;
 import com.github.cherimojava.orchidae.config.cfgHooks;
 
-public class _HookHandler extends TestBase {
+public class _HookExecutor extends TestBase {
 
 	@Test
-	public void hookDetection() throws MalformedURLException {
-		Set set = HookHandler.getHookOrdering(TestHook.class, new File("./target").toURI().toURL());
-		assertEquals(3, set.size());
-		Iterator it = set.iterator();
-		assertEquals(Systm.class, it.next().getClass());
-		assertEquals(SystemLow.class, it.next().getClass());
-		assertEquals(Custom.class, it.next().getClass());
-	}
-
-	@Test
-	public void hookCollection() {
+	public void callAllHooks() {
 		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(cfgHooks.class);
 		HookHandler handler = ctx.getBean(HookHandler.class);
-		assertEquals(0, handler.getHook(Hook.class).size());
-		assertEquals(1, handler.getHook(UploadHook.class).size());
+		for (TestHook i : handler.getHook(TestHook.class)) {
+			assertEquals(0, i.getCount());
+		}
+		handler.callHook(TestHook.class).callAll().callMe();
+		for (TestHook i : handler.getHook(TestHook.class)) {
+			assertEquals(1, i.getCount());
+		}
 	}
 
 	@Hook
 	private static interface TestHook {
-	}
+		void callMe();
 
-	@Order(order = 1, category = Order.Category.SYSTEM)
-	public static class Systm implements TestHook {
+		int getCount();
 	}
 
 	@Order(order = 0, category = Order.Category.SYSTEM)
-	public static class SystemLow implements TestHook {
+	public static class Hook1 implements TestHook {
+		private int i = 0;
+
+		@Override
+		public void callMe() {
+			i++;
+		}
+
+		@Override
+		public int getCount() {
+			return i;
+		}
 	}
 
 	@Order(order = 1, category = Order.Category.CUSTOM)
-	public static class Custom implements TestHook {
+	public static class Hook2 implements TestHook {
+		private int i = 0;
+
+		@Override
+		public void callMe() {
+			i++;
+		}
+
+		@Override
+		public int getCount() {
+			return i;
+		}
 	}
 }
