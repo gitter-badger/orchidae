@@ -1,6 +1,8 @@
 orchidae [![Build Status](https://travis-ci.org/cherimojava/orchidae.svg?branch=master)](https://travis-ci.org/cherimojava/orchidae) [![Coverage Status](https://coveralls.io/repos/cherimojava/orchidae/badge.svg?branch=master)](https://coveralls.io/r/cherimojava/orchidae?branch=master)
 ========
 
+[![Join the chat at https://gitter.im/cherimojava/orchidae](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cherimojava/orchidae?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Usage
 ====
 to run orchidae simply call on the commandline `mvn exec:java` or start the `Starter.java` class within your favourite IDE, please see the setup for 3rd party content first. To create a distributable you need to invoke  `mvn package` to run it call `java -jar target/orchidae-1.0-SNAPSHOT.jar`
